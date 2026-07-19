@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageHeader } from "@/components/page-header";
 
 export const metadata: Metadata = {
   title: "Sensor Monitor",
@@ -8,15 +9,18 @@ export const metadata: Metadata = {
 export default function SensorMonitorPage() {
   return (
     <>
-      <header className="detail-hero">
-        <div className="hero-meta"><span className="eyebrow">Featured project</span><span className="running-badge"><i />운영 중</span></div>
-        <h1>Sensor<br />Monitor</h1>
-        <p>제조 설비의 센서 데이터를 수집하고, 임계값 이탈과 수신 중단을 감지하며, 이상 징후의 근거와 권고를 제공하는 모니터링 서비스입니다.</p>
-        <div className="button-links">
-          <a className="primary-button" href="https://sensor.bugihub.site" target="_blank" rel="noreferrer">라이브 서비스 ↗</a>
-          <a href="https://github.com/YEONJI-P/sensor-monitor" target="_blank" rel="noreferrer">GitHub ↗</a>
-        </div>
-      </header>
+      <PageHeader
+        eyebrow="Featured project"
+        title="Sensor Monitor"
+        description="제조 설비의 센서 데이터를 수집하고, 임계값 이탈과 수신 중단을 감지하며, 이상 징후의 근거와 권고를 제공하는 모니터링 서비스입니다."
+        badge={<span className="running-badge"><i />운영 중</span>}
+        actions={
+          <div className="button-links">
+            <a className="primary-button" href="https://sensor.bugihub.site" target="_blank" rel="noreferrer">라이브 서비스 ↗</a>
+            <a href="https://github.com/YEONJI-P/sensor-monitor" target="_blank" rel="noreferrer">GitHub ↗</a>
+          </div>
+        }
+      />
 
       <section className="content-section" aria-labelledby="overview-heading">
         <div className="section-label"><span className="eyebrow" id="overview-heading">Overview</span><span className="mono-meta">하는 일</span></div>

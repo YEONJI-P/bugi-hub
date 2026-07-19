@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageHeader } from "@/components/page-header";
 import { workLogs, type WorkRepository } from "@/data/work-log";
 
 export const metadata: Metadata = {
@@ -29,13 +30,7 @@ const repositories: {
 export default function WorkLogPage() {
   return (
     <>
-      <header className="work-log-header">
-        <div>
-          <span className="eyebrow">Work log</span>
-          <h1>작업 기록</h1>
-        </div>
-        <p>공개할 수 있는 작업만 저장소별로 정리합니다.</p>
-      </header>
+      <PageHeader eyebrow="Work log" title="작업 기록" description="공개할 수 있는 작업만 저장소별로 정리합니다." />
 
       <div className="repository-list">
         {repositories.map((repository) => {

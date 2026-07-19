@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PageHeader } from "@/components/page-header";
 import { recentWorkLogs } from "@/data/work-log";
 
 const projects = [
@@ -22,13 +23,7 @@ const projects = [
 export default function Home() {
   return (
     <>
-      <header className="home-heading">
-        <div>
-          <span className="eyebrow">Personal hub</span>
-          <h1>홈서버 프로젝트</h1>
-        </div>
-        <p>운영 중인 서비스와 작업 기록을 정리합니다.</p>
-      </header>
+      <PageHeader eyebrow="Personal hub" title="홈서버 프로젝트" description="운영 중인 서비스와 작업 기록을 정리합니다." />
 
       <section className="content-section" aria-labelledby="projects-heading">
         <div className="section-label">
