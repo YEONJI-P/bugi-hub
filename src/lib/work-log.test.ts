@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { workLogs } from "../data/work-log";
+import { recentWorkLogs, workLogs } from "../data/work-log";
 import {
   getFilteredWorkLogs,
   getWorkLogCounts,
@@ -8,10 +8,10 @@ import {
 } from "./work-log";
 
 describe("work log board", () => {
-  it("shows all six entries in descending date order", () => {
+  it("shows all entries in descending date order", () => {
     const entries = getFilteredWorkLogs(workLogs, "all");
 
-    expect(entries).toHaveLength(6);
+    expect(entries).toHaveLength(20);
     expect(entries.map((entry) => entry.date)).toEqual(
       [...entries.map((entry) => entry.date)].sort((left, right) => right.localeCompare(left)),
     );
@@ -19,13 +19,20 @@ describe("work log board", () => {
 
   it("filters entries and reports repository counts", () => {
     expect(getWorkLogCounts(workLogs)).toEqual({
-      all: 6,
-      "personal-hub": 5,
-      "sensor-monitor": 1,
+      all: 20,
+      "personal-hub": 9,
+      "sensor-monitor": 11,
     });
-    expect(getFilteredWorkLogs(workLogs, "personal-hub")).toHaveLength(5);
-    expect(getFilteredWorkLogs(workLogs, "sensor-monitor").map((entry) => entry.slug)).toEqual([
+    expect(getFilteredWorkLogs(workLogs, "personal-hub")).toHaveLength(9);
+    expect(getFilteredWorkLogs(workLogs, "sensor-monitor")).toHaveLength(11);
+  });
+
+  it("keeps unique entry slugs and the existing home previews", () => {
+    expect(new Set(workLogs.map((entry) => entry.slug)).size).toBe(workLogs.length);
+    expect(recentWorkLogs.map((entry) => entry.slug)).toEqual([
+      "nextjs-hub-migration",
       "sensor-image-update-flow",
+      "public-routing",
     ]);
   });
 
