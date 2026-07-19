@@ -21,6 +21,10 @@
   --up: #16803d;
   --down: #b42318;
   --partial: #a15c00;
+  --repo-personal: #c73a7c;
+  --repo-personal-soft: #fff0f7;
+  --repo-sensor: #5268c9;
+  --repo-sensor-soft: #f0f2ff;
   --sans: "Pretendard Variable", Pretendard, system-ui, sans-serif;
   --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 }
@@ -41,6 +45,10 @@
   --up: #4ade80;
   --down: #f87171;
   --partial: #fbbf24;
+  --repo-personal: #ffafd7;
+  --repo-personal-soft: #2c1c27;
+  --repo-sensor: #aeb9ff;
+  --repo-sensor-soft: #202540;
 }
 
 * { box-sizing: border-box; }
@@ -79,7 +87,7 @@ button, input { font: inherit; }
 .tagline { margin: 16px 0 0; color: var(--muted); font-size: .84rem; }
 .hairline { width: 100%; height: 1px; margin: 20px 0; border: 0; background: var(--line); }
 
-.eyebrow, .mono-meta, .checked-at, .section-link, .work-preview time, .work-category, .tag-list, .text-links, .button-links, .running-badge, .repository-label, .repository-actions, .log-card-meta {
+.eyebrow, .mono-meta, .checked-at, .section-link, .work-preview time, .work-category, .tag-list, .text-links, .button-links, .running-badge, .work-log-board {
   font-family: var(--mono);
 }
 .eyebrow { color: var(--faint); font-size: .66rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
@@ -167,23 +175,47 @@ button, input { font: inherit; }
 .integration-card li { display: grid; grid-template-columns: 27px 1fr; gap: 9px; color: var(--muted); font-size: .8rem; }
 .integration-card li span { color: var(--accent); font-family: var(--mono); font-size: .65rem; font-weight: 700; }
 
-.repository-list { display: flex; flex-direction: column; gap: 24px; margin-top: 28px; }
-.repository-section { overflow: hidden; border: 1px solid var(--line); border-radius: 11px; background: var(--panel); }
-.repository-heading { display: flex; align-items: start; justify-content: space-between; gap: 24px; padding: 20px 22px; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--chip) 55%, var(--panel)); }
-.repository-label { color: var(--faint); font-size: .61rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
-.repository-heading h2 { margin: 5px 0 0; font-family: var(--mono); font-size: 1rem; letter-spacing: -.02em; }
-.repository-heading p { margin: 7px 0 0; color: var(--muted); font-size: .76rem; }
-.repository-actions { display: flex; align-items: center; gap: 14px; flex: none; padding-top: 3px; color: var(--faint); font-size: .64rem; }
-.repository-actions a { color: var(--muted); font-weight: 700; text-decoration: none; }
-.repository-actions a:hover { color: var(--accent); }
-.log-card-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 14px; }
-.log-card { padding: 18px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); scroll-margin-top: 20px; }
-.log-card-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--faint); font-size: .62rem; }
-.log-card-meta span { color: var(--accent); text-transform: uppercase; }
-.log-card h3 { margin: 13px 0 0; font-size: .96rem; line-height: 1.45; letter-spacing: -.025em; }
-.log-card > p { margin: 8px 0 0; color: var(--muted); font-size: .78rem; line-height: 1.65; }
-.log-card ul { margin: 13px 0 0; padding-left: 17px; color: var(--muted); font-size: .72rem; line-height: 1.75; }
-.log-card .tag-list { margin-top: 14px; }
+.work-log-board { margin-top: 28px; }
+.work-log-toolbar { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 14px; }
+.work-log-toolbar p { margin: 5px 0 0; color: var(--muted); font-size: .68rem; }
+.work-log-filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.work-log-filters button, .work-log-filters a { display: inline-flex; align-items: center; gap: 8px; min-height: 34px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel); color: var(--muted); font-family: var(--mono); font-size: .66rem; text-decoration: none; cursor: pointer; }
+.work-log-filters strong { color: var(--faint); font-size: .6rem; }
+.work-log-filters button:hover, .work-log-filters a:hover { border-color: var(--line-strong); color: var(--ink); }
+.work-log-filters button[aria-pressed="true"], .work-log-filters a[aria-current="page"] { border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); background: var(--accent-soft); color: var(--accent); }
+.work-log-filters button[aria-pressed="true"] strong, .work-log-filters a[aria-current="page"] strong { color: inherit; }
+.work-log-filters button:focus-visible, .work-log-filters a:focus-visible, .work-log-row > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.work-log-list { overflow: hidden; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--panel); }
+.work-log-row { scroll-margin-top: 20px; }
+.work-log-row + .work-log-row { border-top: 1px solid var(--line); }
+.work-log-row > summary { display: grid; grid-template-columns: 90px 128px minmax(0, 1fr) 18px; align-items: center; gap: 16px; min-height: 68px; padding: 14px 18px; cursor: pointer; list-style: none; }
+.work-log-row > summary::-webkit-details-marker { display: none; }
+.work-log-row > summary:hover { background: color-mix(in srgb, var(--chip) 55%, transparent); }
+.work-log-row[open] > summary { background: color-mix(in srgb, var(--chip) 78%, var(--panel)); }
+.work-log-row time { color: var(--faint); font-size: .63rem; }
+.repository-prefix { display: inline-flex; align-items: center; width: fit-content; padding: 4px 7px; border-left: 3px solid currentColor; border-radius: 3px 6px 6px 3px; font-size: .61rem; font-weight: 700; }
+.repository-prefix[data-repository="personal-hub"] { background: var(--repo-personal-soft); color: var(--repo-personal); }
+.repository-prefix[data-repository="sensor-monitor"] { background: var(--repo-sensor-soft); color: var(--repo-sensor); }
+.work-log-row-main { display: flex; align-items: center; justify-content: space-between; gap: 18px; min-width: 0; }
+.work-log-title { color: var(--ink); font-family: var(--sans); font-size: .9rem; font-weight: 680; letter-spacing: -.02em; }
+.work-log-tags { display: flex; flex: none; flex-wrap: wrap; justify-content: flex-end; gap: 5px; }
+.work-log-tags > span { padding: 4px 7px; border-radius: 5px; background: var(--chip); color: var(--muted); font-size: .59rem; }
+.details-indicator { position: relative; width: 14px; height: 14px; color: var(--faint); }
+.details-indicator::before, .details-indicator::after { position: absolute; top: 6px; left: 2px; width: 10px; height: 1px; background: currentColor; content: ""; }
+.details-indicator::after { transform: rotate(90deg); transition: transform 160ms ease; }
+.work-log-row[open] .details-indicator::after { transform: rotate(0); }
+.work-log-detail { display: grid; grid-template-columns: 202px minmax(0, 1fr); gap: 32px; padding: 20px 50px 22px 124px; border-top: 1px solid var(--line); background: var(--paper); }
+.work-log-detail-meta { display: flex; flex-direction: column; gap: 5px; }
+.work-log-detail-meta span { color: var(--faint); font-size: .57rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.work-log-detail-meta strong { color: var(--accent); font-size: .65rem; }
+.work-log-detail p { margin: 0; color: var(--muted); font-family: var(--sans); font-size: .78rem; line-height: 1.7; }
+.work-log-detail ul { margin: 12px 0 0; padding-left: 17px; color: var(--muted); font-family: var(--sans); font-size: .72rem; line-height: 1.8; }
+
+@media (max-width: 1080px) {
+  .work-log-row-main { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .work-log-tags { justify-content: flex-start; }
+  .work-log-detail { grid-template-columns: 150px minmax(0, 1fr); padding: 20px 24px 22px; }
+}
 
 @media (max-width: 900px) {
   .sidebar { flex-basis: 248px; width: 248px; }
@@ -202,9 +234,19 @@ button, input { font: inherit; }
   .theme-toggle { margin-top: 12px; }
   .main { padding: 30px 20px 56px; }
   .page-header { grid-template-columns: 1fr; align-items: start; gap: 10px; }
-  .repository-heading { align-items: start; flex-direction: column; gap: 10px; }
-  .log-card-grid { grid-template-columns: 1fr; }
-  .repository-actions { width: 100%; justify-content: space-between; }
+  .work-log-toolbar { align-items: start; flex-direction: column; gap: 12px; }
+  .work-log-filters { width: 100%; }
+  .work-log-filters button, .work-log-filters a { justify-content: space-between; }
+  .work-log-row > summary { grid-template-columns: auto 1fr 18px; gap: 9px 12px; padding: 14px; }
+  .work-log-row time { grid-column: 1; grid-row: 1; }
+  .repository-prefix { grid-column: 2; grid-row: 1; }
+  .work-log-row-main { grid-column: 1 / -1; grid-row: 2; align-items: flex-start; flex-direction: column; gap: 9px; }
+  .work-log-tags { justify-content: flex-start; }
+  .details-indicator { grid-column: 3; grid-row: 1; }
+  .work-log-detail { grid-template-columns: 1fr; gap: 12px; padding: 18px 20px 20px; }
 }
 
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .details-indicator::after { transition: none; }
+}
