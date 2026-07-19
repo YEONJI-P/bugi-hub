@@ -22,10 +22,12 @@ const projects = [
 export default function Home() {
   return (
     <>
-      <header className="page-intro">
-        <span className="eyebrow">Home server workspace</span>
-        <h1>작은 서비스를 만들고,<br />직접 운영합니다.</h1>
-        <p>프로젝트의 결과물과 그 결과물이 계속 동작하도록 만든 운영 기록을 한곳에 모읍니다.</p>
+      <header className="home-heading">
+        <div>
+          <span className="eyebrow">Personal hub</span>
+          <h1>홈서버 프로젝트</h1>
+        </div>
+        <p>운영 중인 서비스와 작업 기록을 정리합니다.</p>
       </header>
 
       <section className="content-section" aria-labelledby="projects-heading">
@@ -59,15 +61,15 @@ export default function Home() {
           <span className="eyebrow" id="recent-work-heading">Recent work</span>
           <Link className="section-link" href="/work-log">전체 기록 →</Link>
         </div>
-        <div className="work-preview-list">
+        <div className="work-preview-grid">
           {recentWorkLogs.map((entry) => (
             <article className="work-preview" key={entry.slug}>
-              <time dateTime={entry.date}>{entry.date.replaceAll("-", ".")}</time>
-              <div>
-                <span className="work-category">{entry.category}</span>
-                <h2>{entry.title}</h2>
-                <p>{entry.summary}</p>
+              <div className="work-preview-meta">
+                <span className="work-category">{entry.repository}</span>
+                <time dateTime={entry.date}>{entry.date.replaceAll("-", ".")}</time>
               </div>
+              <h2>{entry.title}</h2>
+              <p>{entry.summary}</p>
             </article>
           ))}
         </div>
