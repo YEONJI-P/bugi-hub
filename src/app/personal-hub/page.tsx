@@ -51,7 +51,7 @@ export default function PersonalHubPage() {
       <PageHeader
         eyebrow="Infrastructure project"
         title="Personal Hub"
-        description="서로 다른 프로젝트를 독립 컨테이너로 유지하면서 공개 라우팅, 배포 버전, 데이터베이스와 상태 확인 접점을 하나의 운영 계약으로 묶는 개인 홈서버 플랫폼입니다."
+        description="프로젝트마다 컨테이너를 따로 두고, 도메인 라우팅·배포 버전·DB·상태 확인은 이 저장소 하나에서 관리하는 홈서버입니다."
         badge={<span className="running-badge"><i />운영 중</span>}
         actions={
           <div className="button-links">
@@ -69,7 +69,7 @@ export default function PersonalHubPage() {
         <div className="scope-grid">
           <article className="scope-card scope-card-primary">
             <span>IN SCOPE</span>
-            <h2>서비스가 홈서버에서 만나는 지점을 책임합니다</h2>
+            <h2>라우팅, 배포, 상태 확인은 여기서 관리합니다</h2>
             <ul>
               <li>Cloudflare Tunnel과 nginx 공개 라우팅</li>
               <li>독립 컨테이너의 네트워크와 실행 버전</li>
@@ -80,7 +80,7 @@ export default function PersonalHubPage() {
           </article>
           <article className="scope-card">
             <span>OUT OF SCOPE</span>
-            <h2>편입한 서비스의 내부 구현은 소유하지 않습니다</h2>
+            <h2>각 서비스의 코드는 원래 저장소에 그대로 둡니다</h2>
             <ul>
               <li>Sensor Monitor의 도메인·API·화면 구현</li>
               <li>서비스 편입을 위한 base path 강제</li>
@@ -108,7 +108,7 @@ export default function PersonalHubPage() {
 
           <article className="architecture-stage architecture-core">
             <span>HOME SERVER EDGE</span>
-            <h2>nginx가 공개 경계를 결정합니다</h2>
+            <h2>어떤 요청을 어디로 보낼지 nginx가 정합니다</h2>
             <ol>
               <li><b>01</b><span>origin TLS 검증과 hostname 구분</span></li>
               <li><b>02</b><span>서비스별 Docker upstream 선택</span></li>
@@ -164,7 +164,7 @@ export default function PersonalHubPage() {
           <span className="mono-meta">비파괴 전환</span>
         </div>
         <div className="integration-card">
-          <div><h2>되돌릴 수 있는 경계를<br />먼저 확보한 뒤 전환합니다</h2></div>
+          <div><h2>언제든 되돌릴 수 있게<br />만들어 두고 바꿉니다</h2></div>
           <ol>
             <li><span>01</span>현재 컨테이너·설정·데이터베이스 상태를 먼저 확인합니다.</li>
             <li><span>02</span>기존 이미지와 database backup을 rollback 좌표로 보존합니다.</li>

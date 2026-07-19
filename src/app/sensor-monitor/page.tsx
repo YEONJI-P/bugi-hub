@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 const designDecisions = [
   {
     label: "Ingest model",
-    title: "동시 관측의 맥락을 보존",
+    title: "같이 측정된 값은 하나로 묶어 저장",
     before: "채널 하나를 Device 하나로 보고 scalar 값을 개별 요청으로 저장",
     current: "물리 Device 아래 Channel을 두고 한 시점의 readings를 MeasurementBatch로 저장",
     reason: "같은 설비에서 동시에 관측된 여러 채널 값을 사후에도 하나의 사건으로 다루기 위해서입니다.",
@@ -69,7 +69,7 @@ export default function SensorMonitorPage() {
         <div className="scope-grid">
           <article className="scope-card scope-card-primary">
             <span>IN SCOPE</span>
-            <h2>센서 데이터의 수집 이후를 책임합니다</h2>
+            <h2>게이트웨이가 보낸 데이터부터 받아서 처리합니다</h2>
             <ul>
               <li>물리 장치 단위 HTTP/JSON batch 수신</li>
               <li>채널별 판독 저장과 임계 방향 판정</li>
@@ -80,7 +80,7 @@ export default function SensorMonitorPage() {
           </article>
           <article className="scope-card">
             <span>OUT OF SCOPE</span>
-            <h2>현장 수집과 검증 전 확장은 경계 밖에 둡니다</h2>
+            <h2>장치 직접 연결과 아직 필요 없는 확장은 하지 않습니다</h2>
             <ul>
               <li>Modbus·OPC-UA 같은 장치 프로토콜 변환</li>
               <li>LLM을 이용한 이상 여부 자체의 판정</li>
@@ -107,7 +107,7 @@ export default function SensorMonitorPage() {
 
           <article className="architecture-stage architecture-core">
             <span>SPRING BACKEND</span>
-            <h2>한 요청, 하나의 명확한 처리 경계</h2>
+            <h2>요청 하나를 트랜잭션 하나로 처리합니다</h2>
             <ol>
               <li><b>01</b><span>장치·채널 검증과 부분 실패 분리</span></li>
               <li><b>02</b><span>Batch·Reading 저장과 DeviceStatus 갱신</span></li>
@@ -163,7 +163,7 @@ export default function SensorMonitorPage() {
           <span className="mono-meta">운영 접점</span>
         </div>
         <div className="integration-card">
-          <div><h2>서비스 코드는 독립적으로,<br />운영 접점은 하나의 계약으로</h2></div>
+          <div><h2>코드는 각 저장소에서,<br />배포와 연결은 Personal Hub에서</h2></div>
           <ol>
             <li><span>01</span>Sensor 저장소는 코드·테스트·불변 SHA 이미지를 소유합니다.</li>
             <li><span>02</span>Personal Hub는 Tunnel·nginx 라우팅과 배포 버전을 관리합니다.</li>

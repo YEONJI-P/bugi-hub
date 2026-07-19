@@ -5,7 +5,7 @@ import { recentWorkLogs } from "@/data/work-log";
 const projects = [
   {
     name: "Sensor Monitor",
-    summary: "센서 데이터를 수집하고 시각화하며, 측정 결과를 설명하는 제조 데이터 모니터링 서비스",
+    summary: "제조 센서 값을 받아 저장하고, 임계값을 넘으면 알림과 함께 원인 설명까지 보여주는 모니터링 서비스",
     stack: ["Spring Boot", "FastAPI", "PostgreSQL"],
     detailHref: "/sensor-monitor",
     repository: "https://github.com/YEONJI-P/sensor-monitor",
@@ -13,7 +13,7 @@ const projects = [
   },
   {
     name: "Personal Hub",
-    summary: "독립 서비스를 배포하고 라우팅하며 상태를 통합 관리하는 홈서버 플랫폼",
+    summary: "여러 서비스를 컨테이너로 띄우고, 도메인 연결·배포·상태 확인을 한곳에서 관리하는 홈서버 구성",
     stack: ["Docker Compose", "nginx", "Cloudflare Tunnel"],
     detailHref: "/personal-hub",
     repository: "https://github.com/YEONJI-P/personal-hub",

@@ -10,7 +10,7 @@ export function Sidebar() {
         <Image className="mascot" src="/favicon.png" width={60} height={60} alt="분홍색 토끼 Bugi" priority />
         <div className="wordmark">Bugi&nbsp;Hub</div>
       </div>
-      <p className="tagline">개인 프로젝트와 서비스를 직접 운영하는 홈서버 허브.</p>
+      <p className="tagline">직접 만든 프로젝트를 집에 있는 서버에서 돌리고 있습니다.</p>
       <NavLinks />
       <hr className="hairline" />
       <StatusPanel />
