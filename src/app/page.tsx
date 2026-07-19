@@ -15,7 +15,7 @@ const projects = [
     name: "Personal Hub",
     summary: "독립 서비스를 배포하고 라우팅하며 상태를 통합 관리하는 홈서버 플랫폼",
     stack: ["Docker Compose", "nginx", "Cloudflare Tunnel"],
-    detailHref: "/work-log",
+    detailHref: "/personal-hub",
     repository: "https://github.com/YEONJI-P/personal-hub",
   },
 ];
