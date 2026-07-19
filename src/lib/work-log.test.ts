@@ -11,7 +11,7 @@ describe("work log board", () => {
   it("shows all entries in descending date order", () => {
     const entries = getFilteredWorkLogs(workLogs, "all");
 
-    expect(entries).toHaveLength(11);
+    expect(entries).toHaveLength(13);
     expect(entries.map((entry) => entry.date)).toEqual(
       [...entries.map((entry) => entry.date)].sort((left, right) => right.localeCompare(left)),
     );
@@ -19,12 +19,12 @@ describe("work log board", () => {
 
   it("filters entries and reports repository counts", () => {
     expect(getWorkLogCounts(workLogs)).toEqual({
-      all: 11,
-      "personal-hub": 4,
-      "sensor-monitor": 7,
+      all: 13,
+      "personal-hub": 5,
+      "sensor-monitor": 8,
     });
-    expect(getFilteredWorkLogs(workLogs, "personal-hub")).toHaveLength(4);
-    expect(getFilteredWorkLogs(workLogs, "sensor-monitor")).toHaveLength(7);
+    expect(getFilteredWorkLogs(workLogs, "personal-hub")).toHaveLength(5);
+    expect(getFilteredWorkLogs(workLogs, "sensor-monitor")).toHaveLength(8);
   });
 
   it("keeps only structured, architecture-scale stories", () => {
@@ -39,6 +39,7 @@ describe("work log board", () => {
 
   it("describes the sensor-monitor architecture evolution", () => {
     expect(getFilteredWorkLogs(workLogs, "sensor-monitor").map((entry) => entry.slug)).toEqual([
+      "channel-threshold-contract",
       "physical-device-channel-model",
       "sensor-ingest-boundary",
       "synchronous-ingest-pipeline",
