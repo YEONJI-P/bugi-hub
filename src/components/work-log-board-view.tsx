@@ -11,6 +11,38 @@ const filterLabels: Record<WorkRepositoryFilter, string> = {
   "sensor-monitor": "sensor-monitor",
 };
 
+const storyTypeLabels: Record<WorkLogEntry["story"]["type"], string> = {
+  solution: "해결",
+  implementation: "구현",
+  decision: "결정",
+};
+
+function getStorySections(story: WorkLogEntry["story"]) {
+  switch (story.type) {
+    case "solution":
+      return [
+        ["문제", story.problem],
+        ["원인", story.cause],
+        ["선택 및 이유", story.decision],
+        ["결과", story.outcome],
+      ];
+    case "implementation":
+      return [
+        ["목표", story.goal],
+        ["구현", story.implementation],
+        ["선택 및 이유", story.decision],
+        ["결과", story.outcome],
+      ];
+    case "decision":
+      return [
+        ["배경", story.background],
+        ["검토", story.options],
+        ["선택 및 이유", story.decision],
+        ["결과", story.outcome],
+      ];
+  }
+}
+
 interface WorkLogBoardViewProps {
   activeRepository: WorkRepositoryFilter;
   entries: WorkLogEntry[];
@@ -85,12 +117,22 @@ export function WorkLogBoardView({
 
             <div className="work-log-detail">
               <div className="work-log-detail-meta">
-                <span>Category</span>
-                <strong>{entry.category}</strong>
+                <div>
+                  <span>Type</span>
+                  <strong>{storyTypeLabels[entry.story.type]}</strong>
+                </div>
+                <div>
+                  <span>Category</span>
+                  <strong>{entry.category}</strong>
+                </div>
               </div>
-              <div>
-                <p>{entry.summary}</p>
-                <ul>{entry.details.map((detail) => <li key={detail}>{detail}</li>)}</ul>
+              <div className="work-log-story">
+                {getStorySections(entry.story).map(([label, content]) => (
+                  <section key={label}>
+                    <h3>{label}</h3>
+                    <p>{content}</p>
+                  </section>
+                ))}
               </div>
             </div>
           </details>

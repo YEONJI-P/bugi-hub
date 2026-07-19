@@ -1,6 +1,29 @@
 export type WorkCategory = "Home Server" | "Service Integration";
 export type WorkRepository = "personal-hub" | "sensor-monitor";
 
+export type WorkLogStory =
+  | {
+      type: "solution";
+      problem: string;
+      cause: string;
+      decision: string;
+      outcome: string;
+    }
+  | {
+      type: "implementation";
+      goal: string;
+      implementation: string;
+      decision: string;
+      outcome: string;
+    }
+  | {
+      type: "decision";
+      background: string;
+      options: string;
+      decision: string;
+      outcome: string;
+    };
+
 export interface WorkLogEntry {
   slug: string;
   date: string;
@@ -8,7 +31,7 @@ export interface WorkLogEntry {
   repository: WorkRepository;
   title: string;
   summary: string;
-  details: string[];
+  story: WorkLogStory;
   tags: string[];
 }
 
@@ -18,9 +41,15 @@ export const workLogs: WorkLogEntry[] = [
     date: "2026-07-19",
     category: "Home Server",
     repository: "personal-hub",
-    title: "Bugi Hub를 Next.js로 전환하기로 결정",
-    summary: "프로젝트 목록을 DB에서 관리하지 않고 정적인 소개 화면과 서버 상태 API에 집중하도록 구조를 단순화했습니다.",
-    details: ["기존 Spring 앱은 검증이 끝날 때까지 보존", "상태 확인은 Next.js Route Handler에서 담당", "작업 기록은 선별해 수동으로 공개"],
+    title: "운영 허브를 Next.js 중심으로 재설계",
+    summary: "관리 기능보다 서비스 소개와 상태 확인에 집중하도록 기존 Spring 허브를 Next.js 애플리케이션으로 전환했습니다.",
+    story: {
+      type: "decision",
+      background: "초기 허브는 프로젝트 정보를 데이터베이스에서 관리했지만, 실제 운영에서는 정적인 소개 화면과 서비스 상태 확인이 핵심이었습니다.",
+      options: "Spring 관리 기능을 유지하거나, 기존 앱을 즉시 교체하거나, 검증 기간을 두고 가벼운 프런트엔드 중심 구조로 전환하는 방안을 비교했습니다.",
+      decision: "Next.js Route Handler가 상태 API를 담당하고 공개 콘텐츠는 정적으로 관리하도록 단순화했습니다. 기존 Spring 앱은 전환 검증이 끝날 때까지 보존했습니다.",
+      outcome: "화면과 운영 API의 책임이 분명해졌고, 데이터베이스 없이도 허브를 독립적으로 배포할 수 있는 구조가 됐습니다.",
+    },
     tags: ["Next.js", "Architecture"],
   },
   {
@@ -28,70 +57,80 @@ export const workLogs: WorkLogEntry[] = [
     date: "2026-07-19",
     category: "Service Integration",
     repository: "sensor-monitor",
-    title: "Sensor 이미지 갱신 흐름 정리",
-    summary: "CI에서 만든 이미지를 검토 가능한 변경으로 연결하고 홈서버가 정해진 주기로 반영하는 운영 흐름을 정리했습니다.",
-    details: ["애플리케이션 저장소와 배포 저장소의 책임 분리", "자동 반영 전 변경 검토 단계 유지", "실패 시 기존 컨테이너를 유지하는 방향"],
-    tags: ["CI", "Docker"],
-  },
-  {
-    slug: "work-log-board",
-    date: "2026-07-19",
-    category: "Home Server",
-    repository: "personal-hub",
-    title: "작업 기록을 최신순 게시판으로 전환",
-    summary: "저장소별 카드로 나뉘어 있던 기록을 하나의 시간순 게시판으로 합치고 URL 기반 저장소 필터를 추가했습니다.",
-    details: ["날짜와 저장소를 먼저 읽는 행 구조", "네이티브 details를 사용한 다중 펼침", "직접 접근과 뒤로 가기를 지원하는 repo query"],
-    tags: ["Next.js", "Accessibility"],
-  },
-  {
-    slug: "migration-aware-sensor-deploy",
-    date: "2026-07-19",
-    category: "Service Integration",
-    repository: "personal-hub",
-    title: "DB migration을 포함한 Sensor 배포 확인",
-    summary: "스키마 변경이 포함된 Sensor release를 자동 교체 대상에서 분리하고 백업과 수동 검증을 거쳐 적용했습니다.",
-    details: ["배포 전 데이터베이스 dump 보관", "Flyway V4·V5 적용 결과 확인", "공개 적재 차단과 내부 인증 응답 재검증"],
-    tags: ["Flyway", "Deployment"],
+    title: "검토 가능한 이미지 배포 흐름 구축",
+    summary: "애플리케이션 빌드와 홈서버 반영 사이에 검토 단계를 두고, 동일 커밋에서 만든 이미지를 추적할 수 있게 했습니다.",
+    story: {
+      type: "solution",
+      problem: "홈서버가 최신 태그를 바로 따라가면 어떤 소스가 배포됐는지 확인하기 어렵고, 스키마 변경이 포함된 릴리스도 같은 방식으로 교체될 수 있었습니다.",
+      cause: "애플리케이션 저장소의 이미지 생성과 배포 저장소의 버전 선택이 명시적인 계약 없이 이어져 있었습니다.",
+      decision: "Backend와 Explain 이미지를 같은 commit SHA로 발행하고, 배포 저장소의 버전 변경을 검토한 뒤 홈서버가 반영하도록 책임을 나눴습니다.",
+      outcome: "실행 중인 소스 버전을 추적할 수 있게 됐고, 자동 반영이 실패하거나 수동 검증이 필요한 릴리스에서는 기존 컨테이너를 유지할 수 있게 됐습니다.",
+    },
+    tags: ["CI", "Docker", "GHCR"],
   },
   {
     slug: "sensor-channel-operations-ui",
     date: "2026-07-19",
     category: "Service Integration",
     repository: "sensor-monitor",
-    title: "장치·채널 중심 운영 화면 정리",
-    summary: "운영자가 구역에서 장치를 찾고 채널 이상을 확인하는 흐름에 맞춰 대시보드와 관리 콘솔을 재구성했습니다.",
-    details: ["대표 센서 채널 20개로 확대", "구역 → 장치 → 채널 탐색 구조", "저장 알림 marker와 고정 시간축 적용"],
+    title: "장치·채널 중심 운영 화면 설계",
+    summary: "운영자가 구역에서 장치를 찾고 채널 이상을 확인하는 흐름에 맞춰 대시보드와 관리 화면을 재구성했습니다.",
+    story: {
+      type: "implementation",
+      goal: "센서 종류별 화면이 아니라 실제 설비 위치와 물리 장치를 기준으로 이상 채널을 빠르게 좁힐 수 있는 운영 흐름이 필요했습니다.",
+      implementation: "구역 → 장치 → 채널 탐색 구조를 만들고, 대표 채널 20개와 실시간 값, 저장 시점 marker를 한 화면 흐름으로 연결했습니다.",
+      decision: "실시간 값이 들어올 때마다 축이 흔들리지 않도록 시간축을 고정하고, 장치 단위 batch 이벤트로 화면을 갱신했습니다.",
+      outcome: "현재 값과 저장된 이력을 같은 맥락에서 비교하고, 문제가 발생한 물리 장치와 채널까지 단계적으로 추적할 수 있게 됐습니다.",
+    },
     tags: ["Dashboard", "SSE"],
+  },
+  {
+    slug: "migration-aware-sensor-deploy",
+    date: "2026-07-19",
+    category: "Service Integration",
+    repository: "personal-hub",
+    title: "Sensor Monitor를 홈서버 운영 경계에 편입",
+    summary: "두 애플리케이션의 상태 감시와 데이터베이스 경계를 연결하고, 스키마 변경이 포함된 릴리스를 별도 절차로 검증했습니다.",
+    story: {
+      type: "solution",
+      problem: "Backend와 Explain을 홈서버에 편입하면서 공개 라우팅, 내부 상태 감시, 전용 데이터베이스, migration 적용을 함께 안전하게 맞춰야 했습니다.",
+      cause: "외부 사용자가 접근할 경로와 컨테이너 내부 운영 경로의 요구가 다르고, 일반 이미지 교체만으로는 데이터베이스 변경의 복구 지점을 보장할 수 없었습니다.",
+      decision: "두 프로세스의 health를 각각 내부 URL로 감시하고 전용 database와 role을 사용했습니다. migration 릴리스는 자동 교체에서 분리해 백업 후 수동 적용했습니다.",
+      outcome: "Flyway V4·V5 적용과 서비스 상태를 함께 확인했으며, 공개 센서 적재 차단과 내부 인증 응답도 재검증했습니다.",
+    },
+    tags: ["Flyway", "Deployment", "Health Check"],
   },
   {
     slug: "public-routing",
     date: "2026-07-18",
     category: "Home Server",
     repository: "personal-hub",
-    title: "Tunnel 기반 외부 공개 경로 구성",
-    summary: "홈 네트워크의 포트를 직접 열지 않고 outbound tunnel과 nginx를 통해 서비스별 origin을 연결했습니다.",
-    details: ["공개 라우팅과 컨테이너 내부 감시 주소 분리", "서비스별 독립 origin 유지", "애플리케이션 포트 직접 공개 방지"],
-    tags: ["Cloudflare Tunnel", "nginx"],
-  },
-  {
-    slug: "sensor-service-boundary",
-    date: "2026-07-18",
-    category: "Service Integration",
-    repository: "personal-hub",
-    title: "Sensor Monitor 운영 접점 연결",
-    summary: "Backend와 Explain의 health, 공개 라우팅, 전용 데이터베이스 경계를 Personal Hub 계약에 연결했습니다.",
-    details: ["두 프로세스의 health를 각각 감시", "센서 적재 경로는 공개 프록시에서 차단", "공유 PostgreSQL 안에서 전용 database와 role 사용"],
-    tags: ["Health Check", "PostgreSQL"],
+    title: "홈 네트워크를 열지 않는 공개 라우팅 구성",
+    summary: "Outbound tunnel과 nginx, 서비스별 서브도메인을 조합해 애플리케이션 포트를 직접 공개하지 않는 진입 경로를 구성했습니다.",
+    story: {
+      type: "implementation",
+      goal: "홈 네트워크에 inbound 포트를 열지 않으면서 여러 서비스를 각자의 루트 경로로 안전하게 공개하는 것이 목표였습니다.",
+      implementation: "Cloudflare Tunnel을 단일 외부 통로로 두고, nginx가 server name에 따라 각 컨테이너 origin으로 요청을 전달하도록 구성했습니다.",
+      decision: "base path를 애플리케이션에 추가하는 대신 서비스별 서브도메인을 사용하고, apex와 wildcard 인증서는 DNS-01로 갱신하도록 했습니다.",
+      outcome: "애플리케이션의 라우팅 가정을 바꾸지 않은 채 공개 진입점과 컨테이너 내부 감시 주소를 분리했습니다.",
+    },
+    tags: ["Cloudflare Tunnel", "nginx", "TLS"],
   },
   {
     slug: "sensor-ingest-boundary",
     date: "2026-07-18",
     category: "Service Integration",
     repository: "sensor-monitor",
-    title: "센서 수신 인증과 장치 현황 통합",
-    summary: "사람용 JWT와 분리한 수신 전용 인증 경계를 추가하고 장치 상태와 상세 채널 화면을 한 흐름으로 연결했습니다.",
-    details: ["공유 키가 없으면 수신 요청 거부", "장치별 batch SSE 갱신", "연결 복구를 위한 주기적 재동기화"],
-    tags: ["Security", "Realtime"],
+    title: "센서 수신과 사용자 인증 경계 분리",
+    summary: "사람용 로그인과 장치 수신을 분리하고, 저장된 설정과 실시간 연결 상태의 책임을 명확히 했습니다.",
+    story: {
+      type: "solution",
+      problem: "사용자 JWT 흐름과 장치의 지속적인 데이터 수신을 같은 인증 모델로 다루면 권한과 장애 범위를 구분하기 어려웠습니다.",
+      cause: "사람의 세션 수명주기, 장치 공유 키, heartbeat와 alarm 상태가 서로 다른 특성을 갖지만 하나의 런타임 경계에 섞여 있었습니다.",
+      decision: "수신 전용 공유 키 검증을 분리하고, Refresh Token과 장치 설정은 PostgreSQL에 보존하되 heartbeat와 alarm은 별도 상태 모델로 관리했습니다.",
+      outcome: "공유 키가 없는 적재 요청을 차단하면서 사용자 인증과 장치 연결 장애를 독립적으로 진단할 수 있게 됐습니다.",
+    },
+    tags: ["Security", "PostgreSQL"],
   },
   {
     slug: "physical-device-channel-model",
@@ -100,7 +139,13 @@ export const workLogs: WorkLogEntry[] = [
     repository: "sensor-monitor",
     title: "수신 모델을 물리 장치·채널 구조로 전환",
     summary: "센서 종류별 고정 필드 대신 물리 장치와 채널, 동시 관측 batch를 기준으로 저장 모델을 정규화했습니다.",
-    details: ["Device와 Channel의 독립 수명주기", "한 시점의 관측값을 batch로 보존", "채널별 임계 정책과 reading 저장"],
+    story: {
+      type: "decision",
+      background: "고정된 센서 필드 중심 모델은 장치마다 다른 채널 구성과 한 시점에 함께 수집된 값의 관계를 표현하기 어려웠습니다.",
+      options: "센서 종류별 테이블을 계속 늘리는 방식과, 장치·채널을 독립 엔티티로 두고 관측 batch를 보존하는 방식을 비교했습니다.",
+      decision: "Device와 Channel의 수명주기를 분리하고, 같은 시점의 readings를 batch로 묶으며 채널별 임계 정책을 적용하도록 모델을 재구성했습니다.",
+      outcome: "장치 구성이 달라져도 스키마를 반복 변경하지 않고 채널을 확장할 수 있으며, 동시 관측의 맥락도 보존할 수 있게 됐습니다.",
+    },
     tags: ["Data Modeling", "PostgreSQL"],
   },
   {
@@ -108,60 +153,32 @@ export const workLogs: WorkLogEntry[] = [
     date: "2026-07-18",
     category: "Service Integration",
     repository: "sensor-monitor",
-    title: "재현 가능한 공개 데모 데이터 구성",
-    summary: "새 데이터베이스에서도 같은 공장·구역·장치 구조가 만들어지고 운영시간 동안 합성 데이터가 흐르도록 데모 경로를 정리했습니다.",
-    details: ["Flyway topology migration", "물리 장치 단위 batch simulator", "데모와 홈서버 Compose 계약 분리"],
-    tags: ["Flyway", "Simulator"],
-  },
-  {
-    slug: "immutable-sensor-images",
-    date: "2026-07-17",
-    category: "Service Integration",
-    repository: "sensor-monitor",
-    title: "불변 SHA 이미지 배포 계약 마련",
-    summary: "Backend와 Explain을 같은 source commit의 private 이미지로 발행하고 홈서버가 정확한 버전을 선택할 수 있게 했습니다.",
-    details: ["latest 대신 commit SHA 태그 사용", "amd64 이미지와 health 경로 확인", "애플리케이션 저장소와 배포 저장소 책임 분리"],
-    tags: ["GHCR", "Docker"],
+    title: "재현 가능한 센서 데모 파이프라인 구성",
+    summary: "새 환경에서도 동일한 설비 구조가 만들어지고, 시뮬레이터부터 저장·실시간 화면·설명 서비스까지 데이터가 흐르도록 연결했습니다.",
+    story: {
+      type: "implementation",
+      goal: "로컬과 공개 환경에서 별도 수작업 없이 같은 공장·구역·장치 구조와 데이터 흐름을 재현해야 했습니다.",
+      implementation: "Flyway로 기준 topology를 만들고, 독립 Python simulator가 물리 장치 단위 batch를 전송하며 SSE 화면과 FastAPI 설명 서비스가 이를 소비하도록 연결했습니다.",
+      decision: "무작위 데이터만 생성하지 않고 실측 CSV replay도 지원했으며, simulator와 Backend의 수명주기를 분리했습니다.",
+      outcome: "빈 데이터베이스에서도 데모 환경을 반복 생성하고, 수신부터 시각화와 설명까지 전체 경로를 한 번에 확인할 수 있게 됐습니다.",
+    },
+    tags: ["Simulator", "SSE", "FastAPI"],
   },
   {
     slug: "home-server-core",
     date: "2026-07-17",
     category: "Home Server",
     repository: "personal-hub",
-    title: "홈서버 기본 실행 단위 구성",
-    summary: "Docker Compose를 기준으로 nginx, 데이터베이스, 허브 서비스를 하나의 운영 단위로 묶었습니다.",
-    details: ["서비스 이름으로 연결되는 내부 네트워크", "nginx를 단일 공개 진입점으로 사용", "데이터 볼륨과 애플리케이션 수명주기 분리"],
-    tags: ["Docker Compose", "nginx"],
-  },
-  {
-    slug: "monitoring-targets",
-    date: "2026-07-16",
-    category: "Home Server",
-    repository: "personal-hub",
-    title: "설정 기반 상태 감시 분리",
-    summary: "공개 주소 대신 컨테이너 내부 URL을 환경별로 주입해 서비스 상태를 확인하도록 경계를 정리했습니다.",
-    details: ["health 응답 계약을 HTTP 200과 status UP으로 통일", "대상 URL은 서버에서만 사용", "화면은 통합된 상태 응답만 소비"],
-    tags: ["Observability", "API"],
-  },
-  {
-    slug: "subdomain-wildcard-tls",
-    date: "2026-07-16",
-    category: "Home Server",
-    repository: "personal-hub",
-    title: "서비스별 서브도메인과 와일드카드 TLS 확정",
-    summary: "애플리케이션의 base path를 바꾸지 않도록 서비스마다 독립 origin을 사용하고 DNS-01 인증서 갱신 경로를 구성했습니다.",
-    details: ["nginx server_name 기반 라우팅", "apex와 wildcard 인증서 통합", "Cloudflare DNS-01 갱신 배선"],
-    tags: ["TLS", "DNS"],
-  },
-  {
-    slug: "sensor-runtime-boundaries",
-    date: "2026-07-16",
-    category: "Service Integration",
-    repository: "sensor-monitor",
-    title: "인증 저장소와 런타임 상태 경계 분리",
-    summary: "Refresh Token을 PostgreSQL로 모으고 장치 설정과 실시간 상태를 분리해 운영 데이터의 책임을 명확히 했습니다.",
-    details: ["Redis 의존성 제거", "DeviceStatus로 heartbeat와 alarm 상태 분리", "API 시각을 UTC Instant로 통일"],
-    tags: ["PostgreSQL", "Domain Design"],
+    title: "독립 서비스를 위한 홈서버 운영 기반 구축",
+    summary: "Compose와 nginx, PostgreSQL, 상태 집계를 하나의 운영 단위로 묶고 서비스별 수명주기와 데이터 경계를 분리했습니다.",
+    story: {
+      type: "implementation",
+      goal: "서로 다른 애플리케이션을 한 서버에서 운영하면서도 배포, 네트워크, 데이터의 경계를 독립적으로 유지해야 했습니다.",
+      implementation: "Docker Compose 내부 네트워크와 nginx 진입점, 영속 데이터 볼륨을 구성하고 각 서비스의 health 응답을 허브에서 통합했습니다.",
+      decision: "공개 주소를 다시 호출하지 않고 환경별 컨테이너 URL을 서버에 주입했으며, health 계약은 HTTP 200과 status UP으로 통일했습니다.",
+      outcome: "서비스를 개별 교체해도 다른 컨테이너와 데이터 볼륨을 유지할 수 있고, 공개 화면에서 운영 상태를 일관되게 확인할 수 있게 됐습니다.",
+    },
+    tags: ["Docker Compose", "Observability"],
   },
   {
     slug: "synchronous-ingest-pipeline",
@@ -170,48 +187,30 @@ export const workLogs: WorkLogEntry[] = [
     repository: "sensor-monitor",
     title: "센서 수신 파이프라인을 동기 처리로 단순화",
     summary: "현재 운영 규모에 맞춰 Kafka fan-out을 제거하고 저장부터 임계 판정과 알림 생성까지 하나의 트랜잭션으로 묶었습니다.",
-    details: ["센서 저장과 상태 갱신의 원자성 확보", "실패 데이터와 freshness 판정 경계 정리", "Factory·Zone 기준 접근 범위 적용"],
+    story: {
+      type: "decision",
+      background: "센서 수신 경로가 메시지 브로커를 거치면서 구성 요소는 늘었지만, 현재 규모에서는 비동기 분산 처리의 운영 이점이 충분하지 않았습니다.",
+      options: "Kafka 기반 fan-out을 유지하는 방식과, 데이터 저장·상태 갱신·임계 판정·알림 생성을 한 트랜잭션에서 처리하는 방식을 비교했습니다.",
+      decision: "실패 경계와 데이터 정합성을 먼저 명확히 하기 위해 동기 트랜잭션 파이프라인을 선택했습니다.",
+      outcome: "센서 저장과 상태 갱신의 원자성을 확보하고, 실패 데이터와 freshness 판정이 어디에서 이뤄지는지 단순하게 추적할 수 있게 됐습니다.",
+    },
     tags: ["Spring Boot", "Transactions"],
-  },
-  {
-    slug: "replay-sse-explain",
-    date: "2026-07-15",
-    category: "Service Integration",
-    repository: "sensor-monitor",
-    title: "실측 리플레이와 실시간 설명 경로 연결",
-    summary: "실측 데이터를 재생하는 simulator부터 SSE 대시보드와 FastAPI 설명 서비스까지 하나의 데모 흐름으로 연결했습니다.",
-    details: ["실측 CSV 기반 데이터 replay", "commit 이후 SSE 이벤트 전송", "설명 provider를 교체 가능한 경계로 분리"],
-    tags: ["FastAPI", "SSE"],
-  },
-  {
-    slug: "initial-bugi-hub",
-    date: "2026-07-15",
-    category: "Home Server",
-    repository: "personal-hub",
-    title: "첫 Bugi Hub와 상태 집계 구현",
-    summary: "독립 서비스를 한곳에서 소개하고 상태를 확인하기 위한 초기 Spring 기반 허브와 배포 이미지를 구성했습니다.",
-    details: ["프로젝트 공개 API와 관리자 인증", "백그라운드 health 상태 집계", "PostgreSQL 실환경 테스트와 Dockerfile"],
-    tags: ["Spring Boot", "Testcontainers"],
   },
   {
     slug: "manufacturing-monitoring-scope",
     date: "2026-07-14",
     category: "Service Integration",
     repository: "sensor-monitor",
-    title: "제조 센서 모니터링으로 범위 재정의",
+    title: "제조 센서 모니터링으로 제품 범위 재정의",
     summary: "범용 IoT 플랫폼 확장보다 게이트웨이 이후의 제조 센서 수집·관측·설명에 집중하도록 프로젝트 범위를 좁혔습니다.",
-    details: ["로컬에서 재현 가능한 데모 우선", "Factory·Zone 용어로 도메인 정리", "클라우드·MSA 확장은 운영 근거가 생길 때까지 보류"],
+    story: {
+      type: "decision",
+      background: "범용 IoT 플랫폼을 목표로 하면 장치 프로토콜, 클라우드 인프라, 분산 처리까지 범위가 넓어져 핵심 사용 흐름을 검증하기 어려웠습니다.",
+      options: "플랫폼 기능을 넓게 구현하는 방향과, 제조 현장의 수집·관측·이상 설명을 로컬에서 완결된 데모로 만드는 방향을 비교했습니다.",
+      decision: "게이트웨이 이후의 데이터 경로에 집중하고 Factory·Zone·Device·Channel 용어로 도메인을 정리했습니다. 클라우드와 MSA 확장은 운영 근거가 생길 때까지 보류했습니다.",
+      outcome: "구현 우선순위가 센서 수신, 운영 화면, 재현 가능한 데이터, 설명 경로로 좁혀져 하나의 시나리오로 연결할 수 있게 됐습니다.",
+    },
     tags: ["Architecture", "Product Scope"],
-  },
-  {
-    slug: "external-simulator-api",
-    date: "2026-04-06",
-    category: "Service Integration",
-    repository: "sensor-monitor",
-    title: "시뮬레이터를 외부 프로세스로 분리",
-    summary: "애플리케이션 내부에서 데이터를 만들던 구조를 제거하고 독립 Python simulator와 일관된 API 응답 경계로 전환했습니다.",
-    details: ["시뮬레이터와 Backend 수명주기 분리", "공통 API 응답과 오류 처리 정비", "대시보드 접근 제어 보강"],
-    tags: ["Python", "API"],
   },
 ];
 
