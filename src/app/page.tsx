@@ -16,7 +16,7 @@ const projects = [
     summary: "여러 서비스를 컨테이너로 띄우고, 도메인 연결·배포·상태 확인을 한곳에서 관리하는 홈서버 구성",
     stack: ["Docker Compose", "nginx", "Cloudflare Tunnel"],
     detailHref: "/personal-hub",
-    repository: "https://github.com/YEONJI-P/personal-hub",
+    repository: "https://github.com/YEONJI-P/bugi-hub",
   },
 ];
 

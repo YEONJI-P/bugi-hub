@@ -56,7 +56,7 @@ export default function PersonalHubPage() {
         actions={
           <div className="button-links">
             <Link className="primary-button" href="/work-log?repo=personal-hub">설계 변화 기록 →</Link>
-            <a href="https://github.com/YEONJI-P/personal-hub" target="_blank" rel="noreferrer">GitHub ↗</a>
+            <a href="https://github.com/YEONJI-P/bugi-hub" target="_blank" rel="noreferrer">GitHub ↗</a>
           </div>
         }
       />
