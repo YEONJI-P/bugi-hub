@@ -12,23 +12,32 @@ const projects = [
     live: "https://sensor.bugihub.site",
   },
   {
-    name: "Personal Hub",
-    summary: "여러 서비스를 컨테이너로 띄우고, 도메인 연결·배포·상태 확인을 한곳에서 관리하는 홈서버 구성",
-    stack: ["Docker Compose", "nginx", "Cloudflare Tunnel"],
-    detailHref: "/personal-hub",
+    name: "Bugi Hub Web",
+    summary: "프로젝트 소개와 작업 기록을 정적으로 제공하고, 내부 서비스와 PostgreSQL 상태를 최소 정보로 집계하는 웹 앱",
+    stack: ["Next.js", "TypeScript", "PostgreSQL"],
+    detailHref: "/bugi-hub",
     repository: "https://github.com/YEONJI-P/bugi-hub",
+    live: "https://bugihub.site",
+  },
+  {
+    name: "Home Server",
+    summary: "여러 서비스를 독립 컨테이너로 실행하고 도메인 라우팅·이미지 버전·데이터 경계를 관리하는 홈서버 플랫폼",
+    stack: ["Docker Compose", "nginx", "Cloudflare Tunnel"],
+    detailHref: "/home-server",
+    repository: "https://github.com/YEONJI-P/home-server-infra",
+    repositoryLabel: "저장소 (공개 예정)",
   },
 ];
 
 export default function Home() {
   return (
     <>
-      <PageHeader eyebrow="Personal hub" title="홈서버 프로젝트" description="운영 중인 서비스와 작업 기록을 정리합니다." />
+      <PageHeader eyebrow="Bugi Hub" title="홈서버 프로젝트" description="직접 만들고 운영하는 서비스와 작업 기록을 정리합니다." />
 
       <section className="content-section" aria-labelledby="projects-heading">
         <div className="section-label">
           <span className="eyebrow" id="projects-heading">Projects</span>
-          <span className="mono-meta">02</span>
+          <span className="mono-meta">03</span>
         </div>
         <div className="project-grid">
           {projects.map((project) => (
@@ -43,7 +52,7 @@ export default function Home() {
               </div>
               <div className="text-links">
                 <Link className="accent-link" href={project.detailHref}>상세 보기 <span aria-hidden="true">→</span></Link>
-                <a href={project.repository} target="_blank" rel="noreferrer">저장소 <span aria-hidden="true">↗</span></a>
+                <a href={project.repository} target="_blank" rel="noreferrer">{project.repositoryLabel ?? "저장소"} <span aria-hidden="true">↗</span></a>
                 {project.live && <a href={project.live} target="_blank" rel="noreferrer">라이브 <span aria-hidden="true">↗</span></a>}
               </div>
             </article>

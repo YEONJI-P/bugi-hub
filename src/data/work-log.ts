@@ -1,5 +1,5 @@
 export type WorkCategory = "Home Server" | "Service Integration";
-export type WorkRepository = "personal-hub" | "sensor-monitor";
+export type WorkRepository = "bugi-hub" | "home-server" | "sensor-monitor";
 
 export type WorkLogStory =
   | {
@@ -40,7 +40,7 @@ export const workLogs: WorkLogEntry[] = [
     slug: "nextjs-hub-migration",
     date: "2026-07-19",
     category: "Home Server",
-    repository: "personal-hub",
+    repository: "bugi-hub",
     title: "운영 허브를 Next.js 중심으로 재설계",
     summary: "관리 기능보다 서비스 소개와 상태 확인에 집중하도록 기존 Spring 허브를 Next.js 애플리케이션으로 전환했습니다.",
     story: {
@@ -56,7 +56,7 @@ export const workLogs: WorkLogEntry[] = [
     slug: "migration-aware-sensor-deploy",
     date: "2026-07-19",
     category: "Service Integration",
-    repository: "personal-hub",
+    repository: "home-server",
     title: "Sensor Monitor를 홈서버 운영 경계에 편입",
     summary: "두 애플리케이션의 상태 감시와 데이터베이스 경계를 연결하고, 스키마 변경이 포함된 릴리스를 별도 절차로 검증했습니다.",
     story: {
@@ -72,7 +72,7 @@ export const workLogs: WorkLogEntry[] = [
     slug: "approval-gated-auto-deploy",
     date: "2026-07-19",
     category: "Service Integration",
-    repository: "personal-hub",
+    repository: "home-server",
     title: "Sensor 배포를 승인 기반 자동화로 전환",
     summary: "CI가 검증한 이미지를 자동 PR로 제안받고, 승인 뒤 홈서버가 스스로 pull해 교체하는 배포 경로를 만들었습니다.",
     story: {
@@ -104,7 +104,7 @@ export const workLogs: WorkLogEntry[] = [
     slug: "public-routing",
     date: "2026-07-18",
     category: "Home Server",
-    repository: "personal-hub",
+    repository: "home-server",
     title: "홈 네트워크를 열지 않는 공개 라우팅 구성",
     summary: "Outbound tunnel과 nginx, 서비스별 서브도메인을 조합해 애플리케이션 포트를 직접 공개하지 않는 진입 경로를 구성했습니다.",
     story: {
@@ -168,7 +168,7 @@ export const workLogs: WorkLogEntry[] = [
     slug: "home-server-core",
     date: "2026-07-17",
     category: "Home Server",
-    repository: "personal-hub",
+    repository: "home-server",
     title: "독립 서비스를 위한 홈서버 운영 기반 구축",
     summary: "Compose와 nginx, PostgreSQL, 상태 집계를 하나의 운영 단위로 묶고 서비스별 수명주기와 데이터 경계를 분리했습니다.",
     story: {

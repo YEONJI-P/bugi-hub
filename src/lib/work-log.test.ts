@@ -20,10 +20,12 @@ describe("work log board", () => {
   it("filters entries and reports repository counts", () => {
     expect(getWorkLogCounts(workLogs)).toEqual({
       all: 13,
-      "personal-hub": 5,
+      "bugi-hub": 1,
+      "home-server": 4,
       "sensor-monitor": 8,
     });
-    expect(getFilteredWorkLogs(workLogs, "personal-hub")).toHaveLength(5);
+    expect(getFilteredWorkLogs(workLogs, "bugi-hub")).toHaveLength(1);
+    expect(getFilteredWorkLogs(workLogs, "home-server")).toHaveLength(4);
     expect(getFilteredWorkLogs(workLogs, "sensor-monitor")).toHaveLength(8);
   });
 
@@ -62,6 +64,8 @@ describe("work log board", () => {
   it("falls back to all for missing or invalid repository values", () => {
     expect(getWorkRepositoryFilter(null)).toBe("all");
     expect(getWorkRepositoryFilter("unknown")).toBe("all");
+    expect(getWorkRepositoryFilter("legacy")).toBe("all");
+    expect(getWorkRepositoryFilter("home-server")).toBe("home-server");
     expect(getWorkRepositoryFilter("sensor-monitor")).toBe("sensor-monitor");
   });
 

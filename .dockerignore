@@ -6,3 +6,7 @@ coverage
 .git
 .gitignore
 README.md
+.github
+AGENTS.md
+CLAUDE.md
+SECURITY.md

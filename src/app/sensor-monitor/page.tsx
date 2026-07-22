@@ -159,14 +159,14 @@ export default function SensorMonitorPage() {
 
       <section className="content-section" aria-labelledby="integration-heading">
         <div className="section-label">
-          <span className="eyebrow" id="integration-heading">Personal Hub integration</span>
+          <span className="eyebrow" id="integration-heading">Home Server integration</span>
           <span className="mono-meta">운영 접점</span>
         </div>
         <div className="integration-card">
-          <div><h2>코드는 각 저장소에서,<br />배포와 연결은 Personal Hub에서</h2></div>
+          <div><h2>코드는 각 저장소에서,<br />배포와 연결은 Home Server에서</h2></div>
           <ol>
             <li><span>01</span>Sensor 저장소는 코드·테스트·불변 SHA 이미지를 소유합니다.</li>
-            <li><span>02</span>Personal Hub는 Tunnel·nginx 라우팅과 배포 버전을 관리합니다.</li>
+            <li><span>02</span>Home Server는 Tunnel·nginx 라우팅과 배포 버전을 관리합니다.</li>
             <li><span>03</span>Backend와 Explain은 내부 URL로 각각 상태를 감시합니다.</li>
             <li><span>04</span>공유 PostgreSQL에서도 전용 database와 role을 유지합니다.</li>
             <li><span>05</span>센서 적재 경로는 공개 프록시에서 차단하고 내부 producer만 호출합니다.</li>

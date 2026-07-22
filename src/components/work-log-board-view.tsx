@@ -7,7 +7,8 @@ import {
 
 const filterLabels: Record<WorkRepositoryFilter, string> = {
   all: "전체",
-  "personal-hub": "personal-hub",
+  "bugi-hub": "bugi-hub",
+  "home-server": "home-server",
   "sensor-monitor": "sensor-monitor",
 };
 
