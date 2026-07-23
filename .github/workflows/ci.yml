@@ -17,9 +17,48 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    outputs:
+      runtime_changed: ${{ steps.runtime-changes.outputs.changed }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+
+      - name: Detect runtime changes
+        id: runtime-changes
+        shell: bash
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          changed=false
+
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            changed=true
+          elif [[ "$EVENT_NAME" == "push" ]]; then
+            if [[ ! "$BEFORE_SHA" =~ ^[0-9a-f]{40}$ ]] \
+              || [[ "$BEFORE_SHA" == "0000000000000000000000000000000000000000" ]] \
+              || ! git cat-file -e "${BEFORE_SHA}^{commit}" 2>/dev/null; then
+              changed=true
+            elif ! git diff --quiet "$BEFORE_SHA" "$HEAD_SHA" -- \
+              .dockerignore \
+              Dockerfile \
+              next.config.ts \
+              package.json \
+              package-lock.json \
+              postcss.config.mjs \
+              public \
+              src \
+              tsconfig.json; then
+              changed=true
+            fi
+          fi
+
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
+          echo "Runtime files changed: $changed" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Set up Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
@@ -75,7 +114,10 @@ jobs:
           test "$(curl --fail --silent http://127.0.0.1:18080/actuator/health)" = '{"status":"UP"}'
 
   publish:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    if: >-
+      github.event_name != 'pull_request' &&
+      github.ref == 'refs/heads/main' &&
+      needs.verify.outputs.runtime_changed == 'true'
     needs: verify
     runs-on: ubuntu-latest
     timeout-minutes: 20
