@@ -94,7 +94,7 @@ ghcr.io/yeonji-p/bugi-hub:<40자리-커밋-SHA>
 
 ## CI와 배포 경계
 
-GitHub Actions는 lint, typecheck, test, production build, 컨테이너 health 검증을 모두 통과한 커밋만 GHCR에 발행합니다. 실행 이미지 pin, 네트워크, 공개 라우팅, TLS와 런타임 비밀값은 인프라 저장소가 소유합니다. 인프라 이미지 pin PR 자동화는 updater 계약을 별도로 확정한 뒤 연결합니다.
+GitHub Actions는 lint, typecheck, test, production build, 컨테이너 health 검증을 모두 통과한 커밋만 GHCR에 발행합니다. 발행 뒤에는 private `bugi-server-infra`의 Bugi Hub image pin 한 줄만 바꾸는 PR을 자동 제안하며 병합과 `Deploy GCP` 실행은 사용자가 직접 승인합니다. 네트워크, 공개 라우팅, TLS와 런타임 비밀값은 인프라 저장소가 소유합니다.
 
 ## 관련 프로젝트
 

@@ -46,6 +46,7 @@ jobs:
             elif ! git diff --quiet "$BEFORE_SHA" "$HEAD_SHA" -- \
               .dockerignore \
               Dockerfile \
+              .github/scripts/propose-bugi-server-infra-release.sh \
               next.config.ts \
               package.json \
               package-lock.json \
@@ -163,3 +164,29 @@ jobs:
 
       - name: Summarize published reference
         run: echo '`${{ steps.image.outputs.name }}:${{ steps.image.outputs.sha }}`' >> "$GITHUB_STEP_SUMMARY"
+
+  propose-bugi-server-infra-release:
+    name: Propose bugi-server-infra release
+    needs: publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Bugi Hub automation
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Checkout bugi-server-infra
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ github.repository_owner }}/bugi-server-infra
+          ref: main
+          path: bugi-server-infra
+          token: ${{ secrets.BUGI_SERVER_INFRA_PR_TOKEN }}
+
+      - name: Update Bugi Hub pin and open PR
+        env:
+          GH_TOKEN: ${{ secrets.BUGI_SERVER_INFRA_PR_TOKEN }}
+          INFRA_REPOSITORY: ${{ github.repository_owner }}/bugi-server-infra
+          SOURCE_SHA: ${{ github.sha }}
+        run: bash .github/scripts/propose-bugi-server-infra-release.sh bugi-server-infra
