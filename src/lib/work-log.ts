@@ -1,6 +1,6 @@
 import type { WorkLogEntry, WorkRepository } from "@/data/work-log";
 
-export const workRepositoryFilters = ["all", "bugi-hub", "home-server", "sensor-monitor"] as const;
+export const workRepositoryFilters = ["all", "home-server", "sensor-monitor"] as const;
 
 export type WorkRepositoryFilter = (typeof workRepositoryFilters)[number];
 
@@ -22,7 +22,6 @@ export function getFilteredWorkLogs(
 export function getWorkLogCounts(entries: WorkLogEntry[]): Record<WorkRepositoryFilter, number> {
   return {
     all: entries.length,
-    "bugi-hub": entries.filter((entry) => entry.repository === "bugi-hub").length,
     "home-server": entries.filter((entry) => entry.repository === "home-server").length,
     "sensor-monitor": entries.filter((entry) => entry.repository === "sensor-monitor").length,
   };
@@ -45,5 +44,5 @@ export function getWorkLogSearch(
 }
 
 export function isWorkRepository(value: string | null): value is WorkRepository {
-  return value === "bugi-hub" || value === "home-server" || value === "sensor-monitor";
+  return value === "home-server" || value === "sensor-monitor";
 }

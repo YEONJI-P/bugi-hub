@@ -3,45 +3,40 @@ import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 
 export const metadata: Metadata = {
-  title: "Home Server",
-  description: "Home Server의 공개 라우팅, 독립 서비스 배포와 안전한 변경 경계",
+  title: "Infrastructure",
+  description: "GCP 단일 VM의 공개 라우팅, 독립 서비스 배포와 안전한 데이터 경계",
 };
 
-const designDecisions = [
+const operatingModel = [
   {
-    label: "Public ingress",
-    title: "공개 경로와 관리 경로 분리",
-    before: "홈 네트워크에 inbound 포트를 열고 같은 경로로 운영 관리",
-    current: "공개 요청은 outbound Cloudflare Tunnel로만 받고 Tailscale은 SSH 관리에만 사용",
-    reason: "공인 origin IP와 공유기 포트포워딩 없이 공개 범위를 nginx 앞단으로 한정하기 위해서입니다.",
+    label: "Runtime",
+    title: "GCP Compute Engine 단일 VM",
+    summary: "오리건 us-west1의 e2-medium과 Debian 13에서 하나의 Compose project를 실행합니다.",
+    reason: "현재 트래픽에서는 서비스를 여러 관리형 플랫폼으로 나누는 비용보다 단일 운영 경계를 유지하는 편이 단순합니다.",
   },
   {
-    label: "Routing",
-    title: "서비스별 독립 origin 유지",
-    before: "하나의 도메인 아래 base path로 여러 앱을 연결",
-    current: "Bugi Hub Web과 외부 서비스가 각 hostname의 루트에서 동작",
-    reason: "인프라 편입 때문에 asset·redirect·API 경로를 수정하지 않고 앱의 배포 독립성을 지키기 위해서입니다.",
+    label: "Ingress",
+    title: "Cloudflare proxy와 nginx",
+    summary: "Cloudflare DNS가 고정 IP의 nginx 80/443으로 요청을 전달하고 각 서비스는 독립 hostname의 루트에서 동작합니다.",
+    reason: "애플리케이션과 PostgreSQL 포트를 공개하지 않고 공개 진입점만 nginx로 제한합니다.",
   },
   {
-    label: "Ownership",
-    title: "애플리케이션과 배포 설정의 소유권 분리",
-    before: "서비스 코드와 홈서버 설정을 한 저장소에서 함께 변경",
-    current: "각 앱은 코드·테스트·이미지를, Home Server는 Compose·routing·pin을 소유",
-    reason: "서비스 내부 구현을 침범하지 않으면서 운영 서버의 실행 버전과 연결 계약을 한곳에서 관리하기 위해서입니다.",
+    label: "Storage",
+    title: "PostgreSQL 전용 Persistent Disk",
+    summary: "VM boot disk와 분리된 20GB pd-balanced disk에 PostgreSQL 데이터를 보관하고 서비스별 database와 role을 유지합니다.",
+    reason: "VM 교체와 애플리케이션 배포에서 데이터 수명주기를 분리하기 위해서입니다.",
   },
   {
     label: "Deployment",
-    title: "검증된 SHA를 배포 좌표로 사용",
-    before: "가변 tag를 pull해 실행 결과가 시점에 따라 달라질 수 있는 방식",
-    current: "애플리케이션 CI를 통과한 commit SHA 이미지를 Compose에 직접 고정",
-    reason: "현재 실행 중인 코드를 추적하고 실패 시 직전 이미지 reference로 되돌리기 위해서입니다.",
+    title: "승인한 revision만 수동 배포",
+    summary: "private self-hosted runner의 GitHub Actions workflow가 선택한 main revision과 불변 SHA 이미지를 적용합니다.",
+    reason: "main push만으로 운영 환경을 바꾸지 않고 배포 시점과 rollback 좌표를 명시적으로 관리합니다.",
   },
   {
-    label: "Data boundary",
-    title: "공유 인스턴스 안에서도 서비스별 DB 경계 유지",
-    before: "서비스가 같은 database와 credential을 함께 사용할 수 있는 구조",
-    current: "PostgreSQL 인스턴스만 공유하고 서비스별 database와 role을 분리",
-    reason: "운영 자원은 절약하면서 migration과 접근 권한의 소유권은 서비스별로 유지하기 위해서입니다.",
+    label: "Recovery",
+    title: "검증된 backup과 직전 이미지 보존",
+    summary: "논리 backup·row 기준선·직전 image를 보존하고 VM 재부팅과 TLS 갱신 경로를 별도로 검증합니다.",
+    reason: "데이터·애플리케이션·호스트 복구를 한 번에 되돌리지 않고 경계별로 확인하기 위해서입니다.",
   },
 ];
 
@@ -50,13 +45,12 @@ export default function HomeServerPage() {
     <>
       <PageHeader
         eyebrow="Infrastructure project"
-        title="Home Server"
-        description="독립 애플리케이션을 Docker Compose로 실행하고 Cloudflare Tunnel·nginx 라우팅, 이미지 pin, PostgreSQL과 rollback 경계를 관리하는 홈서버입니다."
+        title="Infrastructure"
+        description="독립 애플리케이션을 GCP 단일 VM의 Docker Compose로 실행하고 nginx 라우팅, 이미지 pin, PostgreSQL Persistent Disk와 rollback 경계를 관리합니다."
         badge={<span className="running-badge"><i />운영 중</span>}
         actions={
           <div className="button-links">
             <Link className="primary-button" href="/work-log?repo=home-server">운영 작업 기록 →</Link>
-            <a href="https://github.com/YEONJI-P/home-server-infra" target="_blank" rel="noreferrer">GitHub · 공개 예정 ↗</a>
           </div>
         }
       />
@@ -64,14 +58,15 @@ export default function HomeServerPage() {
       <section className="content-section" aria-labelledby="server-boundary-heading">
         <div className="section-label">
           <span className="eyebrow" id="server-boundary-heading">System boundary</span>
-          <span className="mono-meta">운영 접점</span>
+          <span className="mono-meta">GCP 운영 접점</span>
         </div>
         <div className="scope-grid">
           <article className="scope-card scope-card-primary">
             <span>IN SCOPE</span>
             <h2>라우팅과 실행 버전, 데이터 경계를 관리합니다</h2>
             <ul>
-              <li>Cloudflare Tunnel과 nginx 공개 라우팅</li>
+              <li>GCP VM과 PostgreSQL Persistent Disk</li>
+              <li>Cloudflare proxied DNS와 nginx 공개 라우팅</li>
               <li>서비스별 Docker 네트워크와 image pin</li>
               <li>컨테이너 health와 공개 route 검증</li>
               <li>공유 PostgreSQL의 database·role 경계</li>
@@ -85,7 +80,7 @@ export default function HomeServerPage() {
               <li>Bugi Hub Web 화면과 상태 API 구현</li>
               <li>Sensor Monitor 도메인·API·화면 구현</li>
               <li>서비스 편입을 위한 base path 강제</li>
-              <li>공인 IP 노출과 공유기 포트포워딩</li>
+              <li>nginx 이외 애플리케이션·DB 포트 공개</li>
               <li>서비스 간 database·credential 공유</li>
             </ul>
           </article>
@@ -97,23 +92,23 @@ export default function HomeServerPage() {
           <span className="eyebrow" id="server-architecture-heading">Architecture</span>
           <span className="mono-meta">공개 요청 기준</span>
         </div>
-        <div className="architecture-map" aria-label="인터넷 요청이 Cloudflare Tunnel과 nginx를 거쳐 Bugi Hub Web 또는 독립 서비스로 전달되는 구조">
+        <div className="architecture-map" aria-label="인터넷 요청이 Cloudflare proxy와 GCP 고정 IP의 nginx를 거쳐 Bugi Hub Web 또는 독립 서비스로 전달되는 구조">
           <article className="architecture-stage">
             <span>PUBLIC EDGE</span>
-            <h2>Cloudflare Tunnel</h2>
-            <p>홈서버 connector의 outbound 연결을 통해 hostname별 HTTPS 요청만 origin으로 전달합니다.</p>
+            <h2>Cloudflare DNS · Proxy</h2>
+            <p>서비스별 hostname 요청을 GCP의 고정 origin IP로 전달하고 외부 접점을 한곳에서 관리합니다.</p>
           </article>
 
           <span className="architecture-arrow" aria-hidden="true">→</span>
 
           <article className="architecture-stage architecture-core">
-            <span>HOME SERVER EDGE</span>
-            <h2>nginx가 hostname과 공개 경계를 확인합니다</h2>
+            <span>GCP COMPUTE ENGINE</span>
+            <h2>nginx와 Compose가 공개·내부 경계를 나눕니다</h2>
             <ol>
-              <li><b>01</b><span>origin TLS 검증과 hostname 구분</span></li>
+              <li><b>01</b><span>80/443에서 TLS와 hostname 구분</span></li>
               <li><b>02</b><span>서비스별 Docker upstream 선택</span></li>
-              <li><b>03</b><span>외부 ingest 같은 비공개 경로 차단</span></li>
-              <li><b>04</b><span>각 앱의 origin 루트로 요청 전달</span></li>
+              <li><b>03</b><span>Sensor ingest의 method·rate·body·인증 제한</span></li>
+              <li><b>04</b><span>Persistent Disk의 PostgreSQL 연결</span></li>
             </ol>
           </article>
 
@@ -136,22 +131,18 @@ export default function HomeServerPage() {
 
       <section className="content-section" aria-labelledby="server-decisions-heading">
         <div className="section-label">
-          <span className="eyebrow" id="server-decisions-heading">Design decisions</span>
+          <span className="eyebrow" id="server-decisions-heading">Operating model</span>
           <Link className="section-link" href="/work-log?repo=home-server">운영 작업 기록 →</Link>
         </div>
         <div className="decision-grid">
-          {designDecisions.map((decision, index) => (
+          {operatingModel.map((decision, index) => (
             <article className="decision-card" key={decision.label}>
               <div className="decision-card-head">
                 <span>{String(index + 1).padStart(2, "0")}</span>
                 <small>{decision.label}</small>
               </div>
               <h2>{decision.title}</h2>
-              <div className="decision-shift">
-                <div><span>이전</span><p>{decision.before}</p></div>
-                <i aria-hidden="true">→</i>
-                <div><span>현재</span><p>{decision.current}</p></div>
-              </div>
+              <p className="decision-summary">{decision.summary}</p>
               <p className="decision-reason">{decision.reason}</p>
             </article>
           ))}
@@ -167,9 +158,9 @@ export default function HomeServerPage() {
           <div><h2>컨테이너와 데이터의<br />복구 지점을 지키며 바꿉니다</h2></div>
           <ol>
             <li><span>01</span>현재 image reference와 Git·DB 상태를 먼저 확인합니다.</li>
-            <li><span>02</span>검증된 40자리 SHA 이미지만 배포 좌표로 사용합니다.</li>
-            <li><span>03</span>변경 대상 서비스만 교체하고 volume은 유지합니다.</li>
-            <li><span>04</span>내부 health와 공개 route, 접근 차단을 함께 확인합니다.</li>
+            <li><span>02</span>논리 backup과 checksum, row 기준선을 복구 좌표로 보존합니다.</li>
+            <li><span>03</span>검증된 40자리 SHA 이미지와 정확한 main revision만 배포합니다.</li>
+            <li><span>04</span>내부 health와 공개 route, ingest 제한을 함께 확인합니다.</li>
             <li><span>05</span>실패하면 Git·DB를 건드리지 않고 직전 이미지로 되돌립니다.</li>
           </ol>
         </div>

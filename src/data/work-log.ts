@@ -1,5 +1,10 @@
-export type WorkCategory = "Home Server" | "Service Integration";
-export type WorkRepository = "bugi-hub" | "home-server" | "sensor-monitor";
+export type WorkCategory = "Web Application" | "Infrastructure" | "Service Integration";
+export type WorkRepository = "home-server" | "sensor-monitor";
+
+export const workRepositoryLabels: Record<WorkRepository, string> = {
+  "home-server": "infra",
+  "sensor-monitor": "sensor-monitor",
+};
 
 export type WorkLogStory =
   | {
@@ -37,10 +42,42 @@ export interface WorkLogEntry {
 
 export const workLogs: WorkLogEntry[] = [
   {
+    slug: "gcp-single-vm-migration",
+    date: "2026-08-22",
+    category: "Infrastructure",
+    repository: "home-server",
+    title: "홈서버 스택을 GCP 단일 VM으로 이전",
+    summary: "Compose의 서비스 경계를 유지하면서 PostgreSQL 데이터와 공개 트래픽을 GCP Compute Engine으로 비파괴 전환했습니다.",
+    story: {
+      type: "implementation",
+      goal: "노트북의 전원과 네트워크 상태에 의존하던 운영 환경을 옮기되, 검증된 Compose 구조와 기존 PostgreSQL 데이터를 그대로 보존하는 것이 목표였습니다.",
+      implementation: "오리건의 e2-medium VM과 별도 Persistent Disk를 준비하고 논리 백업으로 role·database·row 기준선을 복원했습니다. Cloudflare proxied DNS가 고정 IP의 nginx로 요청을 전달하도록 전환하고 재부팅 뒤 컨테이너와 disk 자동 복구를 확인했습니다.",
+      decision: "Cloud Run과 Cloud SQL로 서비스를 분산하지 않고 현재 규모에 맞는 단일 VM을 선택했습니다. 홈서버 polling timer는 제거하고 정확한 main revision을 배포하는 수동 GitHub Actions workflow로 교체했으며 simulator는 로컬 실행 경계에 남겼습니다.",
+      outcome: "여섯 컨테이너와 PostgreSQL 데이터가 GCP에서 복구됐고 공개 health, 상태 API, 인증 없는 Sensor ingest 차단을 재검증했습니다. 수동 GitHub Actions 배포 smoke test도 통과했으며 기존 홈서버와 Tunnel은 안정화 기간의 rollback 기준점으로 보존했습니다.",
+    },
+    tags: ["GCP", "Docker Compose", "PostgreSQL", "Migration"],
+  },
+  {
+    slug: "global-read-only-demo",
+    date: "2026-08-22",
+    category: "Web Application",
+    repository: "sensor-monitor",
+    title: "전역 읽기 전용 데모 권한과 관리 콘솔 구성",
+    summary: "전체 운영 데이터를 둘러볼 수 있지만 변경 요청은 허용하지 않는 SYSTEM_VIEWER 역할을 추가했습니다.",
+    story: {
+      type: "implementation",
+      goal: "공개 데모에서 전체 대시보드와 관리 설정을 확인하되 운영 데이터는 바꿀 수 없게 하는 것이 목표였습니다.",
+      implementation: "SYSTEM_VIEWER 역할과 전체 조회 범위를 추가하고 사용자·공장·운영 캘린더·구역·장치 콘솔을 읽기 전용으로 열었습니다.",
+      decision: "구역 범위 VIEWER나 변경 권한이 있는 SYSTEM_ADMIN을 재사용하지 않고 전역 조회 전용 역할을 분리했습니다.",
+      outcome: "화면에서는 변경 기능을 숨기고 서버에서도 쓰기 요청을 거부하도록 구성했으며 역할별 권한 테스트와 CI를 통과했습니다.",
+    },
+    tags: ["RBAC", "Spring Security", "Admin Console"],
+  },
+  {
     slug: "nextjs-hub-migration",
     date: "2026-07-19",
-    category: "Home Server",
-    repository: "bugi-hub",
+    category: "Web Application",
+    repository: "home-server",
     title: "운영 허브를 Next.js 중심으로 재설계",
     summary: "관리 기능보다 서비스 소개와 상태 확인에 집중하도록 기존 Spring 허브를 Next.js 애플리케이션으로 전환했습니다.",
     story: {
@@ -101,9 +138,25 @@ export const workLogs: WorkLogEntry[] = [
     tags: ["PostgreSQL", "Flyway", "Validation"],
   },
   {
+    slug: "factory-operating-calendar",
+    date: "2026-07-19",
+    category: "Web Application",
+    repository: "sensor-monitor",
+    title: "공장 운영 캘린더로 freshness 오탐 억제",
+    summary: "공장별 운영시간·휴무·특근·재개 유예를 수신 지연 판정과 대시보드에 함께 적용했습니다.",
+    story: {
+      type: "solution",
+      problem: "계획 정지와 비가동 시간에도 장치 침묵을 장애로 판정해 불필요한 freshness 알림이 발생할 수 있었습니다.",
+      cause: "모든 장치를 24시간 같은 기준으로 감시해 공장별 실제 운영 일정을 반영할 수 없었습니다.",
+      decision: "공장별 timezone·주간 운영시간·날짜 예외·재개 유예를 관리하고 scheduler와 dashboard가 같은 기준을 사용하도록 했습니다.",
+      outcome: "계획 비가동은 freshness 감시에서 제외하면서 센서 수신과 채널 임계 판정은 계속 유지하도록 분리했습니다.",
+    },
+    tags: ["Scheduling", "Freshness", "Dashboard"],
+  },
+  {
     slug: "public-routing",
     date: "2026-07-18",
-    category: "Home Server",
+    category: "Infrastructure",
     repository: "home-server",
     title: "홈 네트워크를 열지 않는 공개 라우팅 구성",
     summary: "Outbound tunnel과 nginx, 서비스별 서브도메인을 조합해 애플리케이션 포트를 직접 공개하지 않는 진입 경로를 구성했습니다.",
@@ -167,7 +220,7 @@ export const workLogs: WorkLogEntry[] = [
   {
     slug: "home-server-core",
     date: "2026-07-17",
-    category: "Home Server",
+    category: "Infrastructure",
     repository: "home-server",
     title: "독립 서비스를 위한 홈서버 운영 기반 구축",
     summary: "Compose와 nginx, PostgreSQL, 상태 집계를 하나의 운영 단위로 묶고 서비스별 수명주기와 데이터 경계를 분리했습니다.",
@@ -246,6 +299,6 @@ export const workLogs: WorkLogEntry[] = [
   },
 ];
 
-const recentWorkLogSlugs = new Set(["nextjs-hub-migration", "physical-device-channel-model", "public-routing"]);
+const recentWorkLogSlugs = new Set(["gcp-single-vm-migration", "global-read-only-demo", "factory-operating-calendar"]);
 
 export const recentWorkLogs = workLogs.filter((entry) => recentWorkLogSlugs.has(entry.slug));

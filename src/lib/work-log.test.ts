@@ -11,7 +11,7 @@ describe("work log board", () => {
   it("shows all entries in descending date order", () => {
     const entries = getFilteredWorkLogs(workLogs, "all");
 
-    expect(entries).toHaveLength(13);
+    expect(entries).toHaveLength(16);
     expect(entries.map((entry) => entry.date)).toEqual(
       [...entries.map((entry) => entry.date)].sort((left, right) => right.localeCompare(left)),
     );
@@ -19,14 +19,12 @@ describe("work log board", () => {
 
   it("filters entries and reports repository counts", () => {
     expect(getWorkLogCounts(workLogs)).toEqual({
-      all: 13,
-      "bugi-hub": 1,
-      "home-server": 4,
-      "sensor-monitor": 8,
+      all: 16,
+      "home-server": 6,
+      "sensor-monitor": 10,
     });
-    expect(getFilteredWorkLogs(workLogs, "bugi-hub")).toHaveLength(1);
-    expect(getFilteredWorkLogs(workLogs, "home-server")).toHaveLength(4);
-    expect(getFilteredWorkLogs(workLogs, "sensor-monitor")).toHaveLength(8);
+    expect(getFilteredWorkLogs(workLogs, "home-server")).toHaveLength(6);
+    expect(getFilteredWorkLogs(workLogs, "sensor-monitor")).toHaveLength(10);
   });
 
   it("keeps only structured, architecture-scale stories", () => {
@@ -41,7 +39,9 @@ describe("work log board", () => {
 
   it("describes the sensor-monitor architecture evolution", () => {
     expect(getFilteredWorkLogs(workLogs, "sensor-monitor").map((entry) => entry.slug)).toEqual([
+      "global-read-only-demo",
       "channel-threshold-contract",
+      "factory-operating-calendar",
       "physical-device-channel-model",
       "sensor-ingest-boundary",
       "synchronous-ingest-pipeline",
@@ -55,10 +55,22 @@ describe("work log board", () => {
   it("keeps unique entry slugs and the curated home previews", () => {
     expect(new Set(workLogs.map((entry) => entry.slug)).size).toBe(workLogs.length);
     expect(recentWorkLogs.map((entry) => entry.slug)).toEqual([
-      "nextjs-hub-migration",
-      "public-routing",
-      "physical-device-channel-model",
+      "gcp-single-vm-migration",
+      "global-read-only-demo",
+      "factory-operating-calendar",
     ]);
+  });
+
+  it("records the verified GCP cutover as an infrastructure story", () => {
+    const migration = workLogs.find((entry) => entry.slug === "gcp-single-vm-migration");
+
+    expect(migration).toMatchObject({
+      date: "2026-08-22",
+      category: "Infrastructure",
+      repository: "home-server",
+      story: { type: "implementation" },
+    });
+    expect(migration?.tags).toEqual(expect.arrayContaining(["GCP", "PostgreSQL", "Migration"]));
   });
 
   it("falls back to all for missing or invalid repository values", () => {

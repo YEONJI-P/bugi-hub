@@ -12,7 +12,7 @@
 
 - 이 저장소는 공개 화면, 정적 Work Log, 상태 Route Handler, 테스트, Docker 이미지와 CI를 소유한다.
 - Java 애플리케이션, Compose, nginx, TLS와 인프라 자동화는 이 저장소에 추가하지 않는다.
-- 배포 이미지 pin, 컨테이너 네트워크, 공개 라우팅과 런타임 비밀값은 `home-server-infra`가 소유한다.
+- 배포 이미지 pin, 컨테이너 네트워크, 공개 라우팅과 런타임 비밀값은 `bugi-server-infra`가 소유한다.
 - 애플리케이션은 origin 루트에서 서빙한다. 인프라 편입을 위해 base path를 추가하지 않는다.
 
 ## 상태와 데이터

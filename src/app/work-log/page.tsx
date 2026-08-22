@@ -7,7 +7,7 @@ import { workLogs } from "@/data/work-log";
 
 export const metadata: Metadata = {
   title: "Work Log",
-  description: "Bugi Hub Web, Home Server, Sensor Monitor의 설계 변화와 기술적 판단",
+  description: "Bugi Hub Web, Infrastructure, Sensor Monitor의 설계 변화와 기술적 판단",
 };
 
 export default function WorkLogPage() {

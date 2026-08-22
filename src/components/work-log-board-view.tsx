@@ -1,4 +1,4 @@
-import type { WorkLogEntry } from "@/data/work-log";
+import { workRepositoryLabels, type WorkLogEntry } from "@/data/work-log";
 import {
   getFilteredWorkLogs,
   getWorkLogCounts,
@@ -7,9 +7,7 @@ import {
 
 const filterLabels: Record<WorkRepositoryFilter, string> = {
   all: "전체",
-  "bugi-hub": "bugi-hub",
-  "home-server": "home-server",
-  "sensor-monitor": "sensor-monitor",
+  ...workRepositoryLabels,
 };
 
 const storyTypeLabels: Record<WorkLogEntry["story"]["type"], string> = {
@@ -62,11 +60,11 @@ export function WorkLogBoardView({
     <section className="work-log-board" aria-labelledby="work-log-board-heading">
       <div className="work-log-toolbar">
         <div>
-          <span className="eyebrow" id="work-log-board-heading">Repository</span>
+          <span className="eyebrow" id="work-log-board-heading">Area</span>
           <p aria-live="polite">{filteredEntries.length}개의 기록</p>
         </div>
 
-        <nav className="work-log-filters" aria-label="저장소별 작업 기록 필터">
+        <nav className="work-log-filters" aria-label="영역별 작업 기록 필터">
           {Object.entries(filterLabels).map(([repository, label]) => {
             const filter = repository as WorkRepositoryFilter;
             const isActive = filter === activeRepository;
@@ -105,7 +103,7 @@ export function WorkLogBoardView({
             <summary>
               <time dateTime={entry.date}>{entry.date.replaceAll("-", ".")}</time>
               <span className="repository-prefix" data-repository={entry.repository}>
-                {entry.repository}
+                {workRepositoryLabels[entry.repository]}
               </span>
               <span className="work-log-row-main">
                 <span className="work-log-title">{entry.title}</span>

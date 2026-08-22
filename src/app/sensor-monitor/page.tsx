@@ -26,8 +26,8 @@ const designDecisions = [
     label: "Access model",
     title: "제조 현장에 맞춘 권한 범위",
     before: "범용 Organization·Group 계층과 여섯 단계 역할",
-    current: "Factory·Zone 계층과 SYSTEM_ADMIN·FACTORY_ADMIN·MEMBER·VIEWER",
-    reason: "사용자의 권한을 실제 설비 위치와 연결하고 REST·SSE에 같은 접근 범위를 적용하기 위해서입니다.",
+    current: "Factory·Zone 계층과 전역·공장·구역 범위의 다섯 역할",
+    reason: "운영 권한은 실제 설비 위치에 연결하고, 공개 데모는 전체를 조회하되 변경할 수 없도록 분리하기 위해서입니다.",
   },
   {
     label: "Runtime state",
@@ -42,6 +42,13 @@ const designDecisions = [
     before: "이상 판정과 설명 생성이 하나의 처리 흐름에 결합될 수 있는 구조",
     current: "Spring 규칙이 이상을 판정하고 FastAPI Explain은 근거와 권고만 생성",
     reason: "외부 LLM의 지연·실패·모델 교체가 센서 저장과 이상 판정의 정합성에 영향을 주지 않게 하기 위해서입니다.",
+  },
+  {
+    label: "Operating calendar",
+    title: "계획 비가동과 실제 수신 장애 분리",
+    before: "공장 운영시간과 관계없이 모든 장치 침묵을 24시간 freshness 대상으로 판정",
+    current: "공장별 timezone·주간표·날짜 예외·재개 유예를 freshness에만 적용",
+    reason: "계획 정지 중 오탐은 줄이되 센서 수신과 채널 임계 판정은 계속 유지하기 위해서입니다.",
   },
 ];
 
@@ -74,7 +81,8 @@ export default function SensorMonitorPage() {
               <li>물리 장치 단위 HTTP/JSON batch 수신</li>
               <li>채널별 판독 저장과 임계 방향 판정</li>
               <li>장치 수신 지연과 알림 상태 관리</li>
-              <li>Factory·Zone 기준 접근 제어</li>
+              <li>운영 캘린더 기반 수신 지연 판정</li>
+              <li>Factory·Zone 범위와 읽기 전용 데모 권한</li>
               <li>SSE 실시간 전달과 이상 설명 연결</li>
             </ul>
           </article>
@@ -159,17 +167,17 @@ export default function SensorMonitorPage() {
 
       <section className="content-section" aria-labelledby="integration-heading">
         <div className="section-label">
-          <span className="eyebrow" id="integration-heading">Home Server integration</span>
+          <span className="eyebrow" id="integration-heading">GCP integration</span>
           <span className="mono-meta">운영 접점</span>
         </div>
         <div className="integration-card">
-          <div><h2>코드는 각 저장소에서,<br />배포와 연결은 Home Server에서</h2></div>
+          <div><h2>코드는 각 저장소에서,<br />배포와 연결은 GCP에서</h2></div>
           <ol>
             <li><span>01</span>Sensor 저장소는 코드·테스트·불변 SHA 이미지를 소유합니다.</li>
-            <li><span>02</span>Home Server는 Tunnel·nginx 라우팅과 배포 버전을 관리합니다.</li>
+            <li><span>02</span>Infrastructure는 nginx 라우팅과 배포 버전을 관리합니다.</li>
             <li><span>03</span>Backend와 Explain은 내부 URL로 각각 상태를 감시합니다.</li>
             <li><span>04</span>공유 PostgreSQL에서도 전용 database와 role을 유지합니다.</li>
-            <li><span>05</span>센서 적재 경로는 공개 프록시에서 차단하고 내부 producer만 호출합니다.</li>
+            <li><span>05</span>공개 ingest는 exact POST·요청 제한·공유 키 인증을 함께 적용합니다.</li>
           </ol>
         </div>
       </section>

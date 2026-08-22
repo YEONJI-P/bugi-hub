@@ -1,43 +1,58 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
-import { recentWorkLogs } from "@/data/work-log";
+import { recentWorkLogs, workRepositoryLabels } from "@/data/work-log";
 
 const projects = [
   {
     name: "Sensor Monitor",
-    summary: "제조 센서 값을 받아 저장하고, 임계값을 넘으면 알림과 함께 원인 설명까지 보여주는 모니터링 서비스",
+    summary: "제조 센서 데이터 수집 · 채널별 임계값 기반 이상 감지 · 알림 및 원인 설명",
     stack: ["Spring Boot", "FastAPI", "PostgreSQL"],
     detailHref: "/sensor-monitor",
     repository: "https://github.com/YEONJI-P/sensor-monitor",
     live: "https://sensor.bugihub.site",
   },
   {
-    name: "Bugi Hub Web",
-    summary: "프로젝트 소개와 작업 기록을 정적으로 제공하고, 내부 서비스와 PostgreSQL 상태를 최소 정보로 집계하는 웹 앱",
-    stack: ["Next.js", "TypeScript", "PostgreSQL"],
-    detailHref: "/bugi-hub",
-    repository: "https://github.com/YEONJI-P/bugi-hub",
-    live: "https://bugihub.site",
-  },
-  {
-    name: "Home Server",
-    summary: "여러 서비스를 독립 컨테이너로 실행하고 도메인 라우팅·이미지 버전·데이터 경계를 관리하는 홈서버 플랫폼",
-    stack: ["Docker Compose", "nginx", "Cloudflare Tunnel"],
+    name: "Infrastructure",
+    summary: "GCP 단일 VM · 서비스별 Docker 컨테이너 · nginx 라우팅 · PostgreSQL Persistent Disk",
+    stack: ["GCP Compute Engine", "Docker Compose", "nginx"],
     detailHref: "/home-server",
-    repository: "https://github.com/YEONJI-P/home-server-infra",
-    repositoryLabel: "저장소 (공개 예정)",
   },
 ];
 
 export default function Home() {
   return (
     <>
-      <PageHeader eyebrow="Bugi Hub" title="홈서버 프로젝트" description="직접 만들고 운영하는 서비스와 작업 기록을 정리합니다." />
+      <PageHeader eyebrow="Bugi Hub" title="개인 프로젝트" description="제조 센서 모니터링 · GCP 인프라 운영 · 설계 및 작업 기록" />
+
+      <section className="content-section" aria-labelledby="overview-heading">
+        <div className="section-label">
+          <span className="eyebrow" id="overview-heading">Overview</span>
+          <span className="mono-meta">GCP Compute Engine</span>
+        </div>
+        <div className="portfolio-map">
+          <div className="portfolio-map-services">
+            <article>
+              <span>PORTFOLIO SITE</span>
+              <h2>Bugi Hub</h2>
+              <p>프로젝트 소개 · 작업 기록 · 서비스 상태</p>
+            </article>
+            <article>
+              <span>SERVICE</span>
+              <h2>Sensor Monitor</h2>
+              <p>센서 수집 · 임계값 기반 이상 감지 · 원인 설명</p>
+            </article>
+          </div>
+          <div className="portfolio-map-runtime">
+            <strong>Infrastructure</strong>
+            <span>GCP Compute Engine · Docker Compose · nginx · PostgreSQL</span>
+          </div>
+        </div>
+      </section>
 
       <section className="content-section" aria-labelledby="projects-heading">
         <div className="section-label">
           <span className="eyebrow" id="projects-heading">Projects</span>
-          <span className="mono-meta">03</span>
+          <span className="mono-meta">02</span>
         </div>
         <div className="project-grid">
           {projects.map((project) => (
@@ -52,7 +67,7 @@ export default function Home() {
               </div>
               <div className="text-links">
                 <Link className="accent-link" href={project.detailHref}>상세 보기 <span aria-hidden="true">→</span></Link>
-                <a href={project.repository} target="_blank" rel="noreferrer">{project.repositoryLabel ?? "저장소"} <span aria-hidden="true">↗</span></a>
+                {project.repository && <a href={project.repository} target="_blank" rel="noreferrer">저장소 <span aria-hidden="true">↗</span></a>}
                 {project.live && <a href={project.live} target="_blank" rel="noreferrer">라이브 <span aria-hidden="true">↗</span></a>}
               </div>
             </article>
@@ -67,14 +82,14 @@ export default function Home() {
         </div>
         <div className="work-preview-grid">
           {recentWorkLogs.map((entry) => (
-            <article className="work-preview" key={entry.slug}>
+            <Link className="work-preview" href={`/work-log#${entry.slug}`} key={entry.slug}>
               <div className="work-preview-meta">
-                <span className="work-category">{entry.repository}</span>
+                <span className="work-category">{workRepositoryLabels[entry.repository]}</span>
                 <time dateTime={entry.date}>{entry.date.replaceAll("-", ".")}</time>
               </div>
               <h2>{entry.title}</h2>
               <p>{entry.summary}</p>
-            </article>
+            </Link>
           ))}
         </div>
       </section>

@@ -27,7 +27,7 @@ const designDecisions = [
     title: "콘텐츠 저장과 플랫폼 감시를 분리",
     before: "PostgreSQL 연결이 애플리케이션 콘텐츠 저장소처럼 보일 수 있는 구성",
     current: "콘텐츠는 정적으로 유지하고 PostgreSQL에는 상태 확인용 SELECT 1만 실행",
-    reason: "데이터 관리 기능을 추가하지 않고 홈서버 플랫폼 의존성의 연결 상태만 확인하기 위해서입니다.",
+    reason: "데이터 관리 기능을 추가하지 않고 운영 인프라 의존성의 연결 상태만 확인하기 위해서입니다.",
   },
   {
     label: "Runtime",
@@ -51,7 +51,7 @@ export default function BugiHubPage() {
       <PageHeader
         eyebrow="Web application"
         title="Bugi Hub Web"
-        description="프로젝트 소개와 선별한 작업 기록을 정적으로 제공하고, 홈서버 내부 서비스와 PostgreSQL 상태를 안전하게 집계하는 Next.js 애플리케이션입니다."
+        description="프로젝트 소개와 선별한 작업 기록을 정적으로 제공하고, GCP 내부 서비스와 PostgreSQL 상태를 안전하게 집계하는 Next.js 애플리케이션입니다."
         badge={<span className="running-badge"><i />운영 중</span>}
         actions={
           <div className="button-links">
@@ -170,7 +170,7 @@ export default function BugiHubPage() {
             <li><span>02</span>lint·typecheck·test·production build를 통과합니다.</li>
             <li><span>03</span>non-root 컨테이너와 health endpoint를 확인합니다.</li>
             <li><span>04</span>repo HEAD 40자리 SHA로 GHCR 이미지를 발행합니다.</li>
-            <li><span>05</span>Home Server는 검증된 SHA만 배포 좌표로 사용합니다.</li>
+            <li><span>05</span>Infrastructure는 검증된 SHA만 배포 좌표로 사용합니다.</li>
           </ol>
         </div>
       </section>

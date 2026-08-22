@@ -137,7 +137,18 @@ button, input { font: inherit; }
 .section-link { color: var(--muted); font-size: .7rem; text-decoration: none; }
 .section-link:hover { color: var(--accent); }
 
-.project-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.portfolio-map { overflow: hidden; border: 1px solid var(--line-strong); border-radius: 11px; background: var(--panel); }
+.portfolio-map-services { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.portfolio-map-services article { padding: 22px; }
+.portfolio-map-services article + article { border-left: 1px solid var(--line); }
+.portfolio-map-services span { color: var(--faint); font-family: var(--mono); font-size: .59rem; font-weight: 700; letter-spacing: .1em; }
+.portfolio-map-services h2 { margin: 8px 0 0; font-size: 1rem; letter-spacing: -.025em; }
+.portfolio-map-services p { margin: 7px 0 0; color: var(--muted); font-size: .74rem; }
+.portfolio-map-runtime { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 12px 22px; border-top: 1px solid color-mix(in srgb, var(--accent) 28%, var(--line)); background: var(--accent-soft); }
+.portfolio-map-runtime strong { color: var(--accent); font-family: var(--mono); font-size: .68rem; }
+.portfolio-map-runtime span { color: var(--muted); font-family: var(--mono); font-size: .63rem; }
+
+.project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 .project-card { min-height: 260px; padding: 22px; border: 1px solid var(--line); border-radius: 11px; background: var(--panel); }
 .project-card-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .project-card h2 { margin: 0; font-size: 1.28rem; letter-spacing: -.035em; }
@@ -150,7 +161,8 @@ button, input { font: inherit; }
 .text-links a:hover, .text-links .accent-link { color: var(--accent); }
 
 .work-preview-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.work-preview { padding: 17px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); }
+.work-preview { padding: 17px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); text-decoration: none; }
+.work-preview:hover { border-color: var(--line-strong); }
 .work-preview-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .work-preview time { color: var(--faint); font-size: .64rem; }
 .work-category { color: var(--accent); font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; }
@@ -189,6 +201,7 @@ button, input { font: inherit; }
 .decision-card-head > span { color: var(--accent); font-size: .63rem; font-weight: 700; }
 .decision-card-head small { color: var(--faint); font-size: .58rem; letter-spacing: .06em; text-transform: uppercase; }
 .decision-card h2 { margin: 11px 0 0; font-size: .95rem; letter-spacing: -.025em; }
+.decision-summary { margin: 15px 0 0; color: var(--muted); font-size: .73rem; line-height: 1.65; }
 .decision-shift { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 10px; margin-top: 16px; }
 .decision-shift > div { height: 100%; padding: 12px; border-radius: 7px; background: var(--chip); }
 .decision-shift > div:last-child { background: var(--accent-soft); }
@@ -265,6 +278,9 @@ button, input { font: inherit; }
   .theme-toggle { margin-top: 12px; }
   .main { padding: 30px 20px 56px; }
   .page-header { grid-template-columns: 1fr; align-items: start; gap: 10px; }
+  .portfolio-map-services { grid-template-columns: 1fr; }
+  .portfolio-map-services article + article { border-top: 1px solid var(--line); border-left: 0; }
+  .portfolio-map-runtime { align-items: flex-start; flex-direction: column; gap: 4px; }
   .scope-card, .decision-card { padding: 18px; }
   .decision-card:last-child:nth-child(odd) { grid-column: auto; }
   .architecture-map { padding: 12px; }

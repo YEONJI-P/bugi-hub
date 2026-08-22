@@ -7,8 +7,8 @@
 
 ## 주요 기능
 
-- Sensor Monitor, Bugi Hub Web, Home Server 프로젝트 소개
-- 저장소별로 탐색할 수 있는 정적 Work Log
+- Sensor Monitor와 Infrastructure 프로젝트 소개
+- 영역별로 탐색할 수 있는 정적 Work Log
 - 외부 서비스 health와 PostgreSQL `SELECT 1` 결과를 모은 상태 패널
 - non-root standalone 컨테이너와 커밋 SHA 기반 이미지 배포
 
@@ -23,7 +23,7 @@ flowchart LR
   Status --> Postgres[(PostgreSQL SELECT 1)]
 ```
 
-PostgreSQL은 콘텐츠 저장소가 아닙니다. 홈서버 플랫폼의 연결 상태만 확인하며 애플리케이션 데이터는 저장하지 않습니다.
+PostgreSQL은 콘텐츠 저장소가 아닙니다. GCP 운영 환경의 연결 상태만 확인하며 애플리케이션 데이터는 저장하지 않습니다.
 
 ## 기술 스택
 
@@ -99,7 +99,6 @@ GitHub Actions는 lint, typecheck, test, production build, 컨테이너 health �
 ## 관련 프로젝트
 
 - [Sensor Monitor](https://github.com/YEONJI-P/sensor-monitor)
-- [Home Server Infra](https://github.com/YEONJI-P/home-server-infra) — 공개 예정
 
 ## 보안
 

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     default: "Bugi Hub",
     template: "%s · Bugi Hub",
   },
-  description: "직접 만든 프로젝트를 집에 있는 서버에서 운영하는 사이트",
+  description: "직접 만든 프로젝트를 GCP에서 운영하고 작업 기록과 상태를 보여주는 사이트",
   icons: { icon: "/favicon.png" },
 };
 
